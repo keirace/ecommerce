@@ -89,7 +89,7 @@ export default function AuthForm({ mode, email, onSubmit }: Props) {
             <div className="relative">
               <label htmlFor="password" className="sr-only">Password</label>
               <input
-                type="password"
+                type={show ? 'text' : 'password'}
                 id="password"
                 name="password"
                 placeholder="minimum 8 characters"
@@ -98,7 +98,7 @@ export default function AuthForm({ mode, email, onSubmit }: Props) {
                 autoComplete={mode === 'Sign Up' ? 'new-password' : 'current-password'}
                 className="w-full rounded-md border border-gray-300 p-4 focus:border-black focus:outline-none"
               />
-              <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center font-semibold" onClick={() => setShow(!show)} aria-label={show ? 'Hide password' : 'Show password'}>
+              <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center font-semibold" onClick={() => setShow(!show)} aria-label={show ? 'Hide password' : 'Show password'} >
                 {show ? 'Hide' : 'Show'}
               </button>
             </div>
