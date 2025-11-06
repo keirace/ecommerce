@@ -48,7 +48,7 @@ export default function Footer() {
                     {footerColumns.map((col, index) => {
                         const isExpanded = openIndex === index; // check if the current column is expanded
                         return (
-                            <div key={col.title} className="border-b border-light-400 lg:border-none py-5 cursor-pointer transition-transform duration-300 group" onClick={expand} aria-expanded={isExpanded}>
+                            <div key={col.title} className="border-b border-light-400 lg:border-none py-5 transition-transform duration-300 group" onClick={expand} aria-expanded={isExpanded}>
                                 <div className="flex items-center justify-between">
                                     <h4 className="text-body-medium">{col.title}</h4>
                                     <Image className={`lg:hidden transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} src="/chevron-down.svg" alt="Arrow" width={16} height={16} />
@@ -59,7 +59,7 @@ export default function Footer() {
                                         <li key={l}>
                                             <Link
                                                 href="#"
-                                                className="text-caption text-dark-700 hover:text-dark-500"
+                                                className="cursor-pointer text-caption text-dark-700 hover:text-dark-500"
                                             >
                                                 {l}
                                             </Link>
