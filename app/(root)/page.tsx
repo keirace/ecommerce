@@ -14,11 +14,11 @@ export default async function Home() {
           Latest shoes
         </h2>
 
-          <div className="grid grid-cols-1 grid-span-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {products.map((product) => (
-              <Card key={product.id} {...product} slug={`/products/${product.id}`} />
-            ))}
-          </div>
+        <div className="grid grid-cols-1 grid-span-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {products.map((product) => (
+            <Card key={product.id} {...product} slug={product.id.toString()} />
+          ))}
+        </div>
       </section>
     </main>
   );

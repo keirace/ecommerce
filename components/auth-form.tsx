@@ -40,14 +40,13 @@ export default function AuthForm({ mode, email, onSubmit }: Props) {
   }
 
   return (
-    <div className="min-h-screen mx-auto max-w-xl space-y-6 ">
+    <div className="min-h-screen mx-auto max-w-xl space-y-6">
       <div className="flex flex-col items-center gap-10 p-10">
-        {/* <div> */}
+
         <Image src="/Logo_NIKE.svg" alt="Nike Logo" width={60} height={60} />
         <h2 className="text-heading-3">{mode === 'Lookup' ? 'Enter your email to join us or sign in.' : mode === 'Sign In' ? 'Welcome back!' : 'Create an account'}</h2>
-        {/* </div> */}
 
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
           {mode !== 'Lookup' ? (
             <div className="inline-flex items-center gap-2 mb-4">
               <p className="text-body">{email}</p><Link href="/lookup" className="font-caption text-dark-700 underline hover:cursor-pointer hover:text-dark-500">edit</Link>
@@ -104,10 +103,25 @@ export default function AuthForm({ mode, email, onSubmit }: Props) {
             </div>
           )}
 
-          <p className="text-dark-700 py-5">By continuing, I agree to Nike&apos;s <span className="font-bold underline hover:cursor-pointer">Privacy Policy</span> and <span className="font-bold underline hover:cursor-pointer">Terms of Use</span>.</p>
+          {mode === 'Lookup' && (
+            <p className="text-dark-700 py-5">By continuing, I agree to Nike&apos;s <span className="font-bold underline hover:cursor-pointer">Privacy Policy</span> and <span className="font-bold underline hover:cursor-pointer">Terms of Use</span>.</p>
+          )}
+
+          {mode === 'Sign In' && (
+            <div className="flex justify-between items-center py-5">
+              <Link href="/reset-password" className="font-caption text-dark-700 underline hover:cursor-pointer hover:text-dark-500">Forgot password?</Link>
+            </div>
+          )}
+
+          {mode === 'Sign Up' && (
+            <div className="flex flex-row items-start gap-3 py-5">
+              <input type="checkbox" id="terms" name="terms" className="mt-0.5 h-5 w-5 rounded-2xl accent-black" />
+              <p className="">I agree to Nike&apos;s <span className="font-bold underline hover:cursor-pointer">Privacy Policy</span> and <span className="font-bold underline hover:cursor-pointer">Terms of Use</span>.</p>
+            </div>
+          )}
 
           <div className="flex justify-end">
-            <button type="submit" className="rounded-full bg-black px-7 py-3 text-white hover:bg-dark-700 hover:cursor-pointer">
+            <button type="submit" className="rounded-full bg-black px-7 py-3 text-white font-semibold hover:bg-dark-700 hover:cursor-pointer">
               {mode === 'Lookup' ? 'Continue' : mode === 'Sign In' ? 'Sign In' : 'Sign Up'}
             </button>
           </div>
