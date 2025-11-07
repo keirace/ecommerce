@@ -14,8 +14,9 @@ const NAV_LINKS = [
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const prevScrollY = useRef(window.pageYOffset);
-    const currentScrollY = useRef(window.pageYOffset);
+    // Removed window access on initial render for SSR compatibility
+    const prevScrollY = useRef(0);
+    const currentScrollY = useRef(0);
 
     // handle scroll to hide/show navbar
     useEffect(() => {
@@ -53,7 +54,7 @@ const Navbar = () => {
                     ))}
                 </ul>
                 <div className="gap-6 hidden md:flex items-center">
-                    <div className="flex items-center cursor-pointer lg:bg-black/5 rounded-4xl hover:bg-black/10 focus:bg-black/10">
+                    <div className="flex items-center lg:bg-black/5 rounded-4xl hover:bg-black/10 focus:bg-black/10">
                         <label htmlFor="search" className="sr-only">Search</label>
                         <label htmlFor="search" className="cursor-pointer m-2"><Image src="/search.svg" alt="Search" width={20} height={20} /></label>
                         <input type="text" id="search" placeholder="Search" className="outline-none ml-2 hidden lg:inline" />
