@@ -3,7 +3,7 @@ import { auth, sessionCookieOptions } from "./auth";
 import { cookies, headers } from "next/headers";
 import { db } from "./db";
 import * as schema from "../database/index";
-import { eq, and, lt, is } from "drizzle-orm";
+import { eq, and, lt } from "drizzle-orm";
 import { randomUUID } from "crypto";
 
 export async function signIn(formData: FormData) {

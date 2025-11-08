@@ -3,3 +3,16 @@ export * from "./session.model";
 export * from "./verification.model";
 export * from "./account.model";
 export * from "./guest.model";
+export * from "./product.model";
+export * from "./product-variant.model";
+export * from "./category.model";
+export * from "./cart.model";
+export * from "./wishlist.model";
+export * from "./filters/size.model";
+export * from "./filters/color.model";
+export * from "./brand.model";
+export * from "./filters/gender.model";
+export * from "./image.model";
+export * from "./order.model";
+export * from "./address.model"
+export * from "./collection.model"
