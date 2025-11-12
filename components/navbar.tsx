@@ -12,42 +12,43 @@ const NAV_LINKS = [
     { label: "Contact", href: "/contact" },
 ];
 
+const handleScrollDown = (currentScrollY: React.RefObject<number>, prevScrollY: React.RefObject<number>, elementId: string) => {
+    currentScrollY.current = window.pageYOffset;
+    // Scroll down - hide navbar
+    if (currentScrollY.current > prevScrollY.current) {
+        document.getElementById(elementId)?.style.setProperty("transform", "translateY(-100%)");
+    } else {
+        document.getElementById(elementId)?.style.setProperty("transform", "translateY(0)");
+    }
+    prevScrollY.current = currentScrollY.current;
+};
+
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     // Removed window access on initial render for SSR compatibility
-    const prevScrollY = useRef(0);
-    const currentScrollY = useRef(0);
+    const prevScrollY = useRef<number>(0);
+    const currentScrollY = useRef<number>(0);
 
     // handle scroll to hide/show navbar
     useEffect(() => {
-        const handleScrollDown = () => {
-            currentScrollY.current = window.pageYOffset;
-            if (currentScrollY.current > prevScrollY.current) {
-                document.getElementById("desktop-menu")?.style.setProperty("transform", "translateY(-100%)");
-            } else {
-                document.getElementById("desktop-menu")?.style.setProperty("transform", "translateY(0)");
-            }
-            prevScrollY.current = currentScrollY.current;
-        };
-
         if (!isOpen) {
-            window.addEventListener("scroll", handleScrollDown);
+            window.addEventListener("scroll", () => handleScrollDown(currentScrollY, prevScrollY, "desktop-menu"));
         }
 
         return () => {
-            window.removeEventListener("scroll", handleScrollDown);
+            window.removeEventListener("scroll", () => handleScrollDown(currentScrollY, prevScrollY, "desktop-menu"));
         };
     }, [isOpen]);
 
     return (
-        <header id="desktop-menu" className="fixed top-0 left-0 right-0 z-50 bg-white transition-transform duration-300">
+        <header id="desktop-menu" className="fixed top-0 left-0 right-0 z-40 bg-white transition-transform duration-300">
             <nav className="flex justify-between items-center h-16  px-10">
                 <Link href="/" aria-label="Home" className="logo"><Image src="/Logo_NIKE.svg" alt="Logo" width={55} height={55} /></Link>
 
                 <ul className="gap-8 hidden md:flex font-semibold">
                     {NAV_LINKS.map((link) => (
                         <li key={link.href}>
-                            <Link href={link.href} className="hover:underline underline-offset-7 decoration-2">
+                            <Link href={link.href} className="hover:underline underline-offset-7 decoration-2" scroll={true}>
                                 {link.label}
                             </Link>
                         </li>
