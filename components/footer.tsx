@@ -16,45 +16,19 @@ export default function Footer() {
 
     return (
         <footer className="pb-8 mx-10">
-            <div className="mx-auto max-w-7xl py-12">
-                <div className="mb-8 flex justify-center">
-                    <Image src="/Logo_NIKE.svg" alt="Nike" width={48} height={48} />
-                </div>
-                <div className="items-start max-w-4xl mx-auto">
-                    <div className="grid gap-8 grid-cols-4 md:col-span-7">
-                        {columns.map((col) => (
-                            <div key={col.title}>
-                                <h4 className="mb-4 text-heading-4 py-5">{col.title}</h4>
-                                <ul className="space-y-3">
-                                    {col.links.map((l) => (
-                                        <li key={l}>
-                                            <Link
-                                                href="#"
-                                                className="text-body-medium text-dark-700 hover:text-dark-500 block truncate"
-                                            >
-                                                {l}
-                                            </Link>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
 
             <div className="mx-auto max-w-7xl py-10 border-t border-black/10">
                 <div className="lg:grid lg:grid-cols-5">
                     {footerColumns.map((col, index) => {
                         const isExpanded = openIndex === index; // check if the current column is expanded
                         return (
-                            <div key={col.title} className="border-b border-light-400 lg:border-none py-5 transition-transform duration-300 group" onClick={expand} aria-expanded={isExpanded}>
+                            <div key={col.title} className="border-b border-light-400 lg:border-none py-5 transition-transform duration-300 hover:cursor-pointer" onClick={expand} aria-expanded={isExpanded}>
                                 <div className="flex items-center justify-between">
                                     <h4 className="text-body-medium">{col.title}</h4>
                                     <Image className={`lg:hidden transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} src="/chevron-down.svg" alt="Arrow" width={16} height={16} />
                                 </div>
-                                <ul className={`mt-5 space-y-3 transition-all duration-300 ${isExpanded ? "block" : "hidden"
-                                    } lg:block`}>
+                                <ul className={`space-y-3 transition-all duration-300 lg:max-h-100 lg:mt-5 overflow-hidden ${isExpanded ? "max-h-100 mt-5" : "max-h-0"
+                                    }`}>
                                     {col.links.map((l) => (
                                         <li key={l}>
                                             <Link
@@ -79,8 +53,8 @@ export default function Footer() {
             </div>
 
             <div className="border-t border-white/10">
-                <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 p-4 text-dark-700 text-body-medium md:flex-row sm:px-6 lg:px-8">
-                    <div className="flex items-center gap-3 text-caption">
+                <div className="mx-auto flex max-w-7xl flex-col items-center justify-between py-4 text-dark-700 text-body-medium md:flex-row">
+                    <div className="flex items-center pr-3 text-caption">
                         <span>© 2025 Nike, Inc. All Rights Reserved</span>
                     </div>
                     <ul className="flex flex-col md:flex-row items-center gap-6 text-caption">
