@@ -112,8 +112,12 @@ async function seed() {
 
 		// Read images from public/shoes
 		const sourceDir = join(process.cwd(), "public", "shoes");
-		const totalImages = (await readdir(sourceDir)).length;
-		const productNames = Array.from({ length: totalImages }, (_, i) => `Nike Air Max ${i + 1}`);
+        
+        // Create product names based on available image names in public/shoes
+		const productNames = (await readdir(sourceDir)).map((file) => {
+            const name = file.replace(/\.[^/.]+$/, ""); // Remove file extension
+            return name.split("+").map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(" "); // Capitalize words
+        });
 
 		// For each product name, create product, variants, and images
 		for (const productName of productNames) {
@@ -162,7 +166,7 @@ async function seed() {
 				await db.update(schema.products).set({ defaultVariantId }).where(eq(schema.products.id, insertedProduct.id));
 			}
 
-			const pickName = (name: string) => name.replace(/\s+/g, "-").toLowerCase();
+			const pickName = (name: string) => name.replace(/\s/g, "+").toUpperCase();
 			const images = schema.insertImageSchema.parse({
 				url: "/shoes/" + pickName(productName) + ".avif",
 				productId: insertedProduct.id,

@@ -6,9 +6,8 @@ import Filters from '@/components/filters';
 import Card from '@/components/card';
 // import { handleScrollDown } from './navbar';
 
-export default function ProductsClient({ products, initialIsFilterOpen = true, }: { products: Product[]; initialIsFilterOpen: boolean; }) {
-    const [isFilterOpen, setIsFilterOpen] = useState<boolean>(initialIsFilterOpen);
-    const totalCount = products.length;
+export default function ProductsClient({ products, totalCount, }: { products: Product[]; totalCount: number;}) {
+    const [isFilterOpen, setIsFilterOpen] = useState<boolean>(true);
     const prevScrollY = useRef<number>(0);
     const currentScrollY = useRef<number>(0);
 
@@ -83,9 +82,12 @@ export default function ProductsClient({ products, initialIsFilterOpen = true, }
                         <p className="text-body-medium text-dark-700 flex justify-center">No products found.</p>
                     ) : (
                         <div className={`grid col-span-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 w-full px-16 py-4 `}>
-                            {products.map((product) => (
-                                <Card {...product} key={product.id} />
-                            ))}
+                            {products.map((product) => {
+                                const price = product.minPrice === product.maxPrice ? product.minPrice : `${product.minPrice} - ${product.maxPrice}`;
+                                return (
+                                    <Card {...product} price={price} key={product.id} />
+                                );
+                            })}
                         </div>
                     )}
                 </div>

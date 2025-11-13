@@ -36,7 +36,7 @@
 // 	},
 // ];
 
-export const MOCK_PRODUCTS: Product[] = [
+export const MOCK_PRODUCTS: CardProps[] = [
     {
         id: "1",
         name: "Nike Air Max Pulse",
@@ -160,7 +160,7 @@ export const filterList = [
     },
     {
         title: 'Price Range',
-        options: ['$0 - $50', '$51 - $100', 'Over $200'],
+        options: ['$0 - $50', '$51 - $100', 'Over $100'],
         isExpanded: false,
     },
 ];
