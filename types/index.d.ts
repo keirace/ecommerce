@@ -19,9 +19,7 @@ type CardProps = {
 	description: string | null;
 	image: string;
 	id: string;
-	gender?: string;
-	sizes?: string[];
-	colors?: string[];
+	variantId?: string;
 	createdAt?: string;
 	price: string | number;
 	meta?: string | string[];
@@ -78,4 +76,55 @@ type NormalizedProductFilters = {
 	sort?: "price-asc" | "price-desc" | "newest";
 	pages?: number;
 	limit?: number;
+};
+
+type ProductDetail = {
+	product: {
+		id: string;
+		name: string;
+		description: string;
+		categoryId: string;
+		genderId: string | null;
+		brandId: string | null;
+		isPublished: boolean;
+		defaultVariantId: string | null;
+		createdAt: Date;
+		updatedAt: Date;
+
+		genderLabel: string | null;
+		genderSlug: string | null;
+
+		brandName: string | null;
+		brandSlug: string | null;
+
+		categoryName: string | null;
+		categorySlug: string | null;
+	},
+
+	variants: {
+		id: string;
+		size: string;
+		price: string | null;
+		salePrice?: string | null;
+		color: string;
+		weight: number;
+		inStock: number;
+		sku: string;
+	}[],
+
+	images: {
+		id: string;
+		url: string;
+		isPrimary: boolean;
+		variantId?: string;
+	}[],
+};
+
+type Review = {
+	id: string;
+	username: string;
+    name: string;
+    comment: string;
+    rating: number;
+    date: string;
 };

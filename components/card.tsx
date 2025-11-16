@@ -33,18 +33,16 @@ const CardBadge = ({ label, tone }: CardBadgeProps) => {
 
 const Card = ({ name, description, image, id, price, meta, badge }: CardProps) => {
     return (
-        <Link href={`/products/${id}`} aria-label={name} className="group rounded-xl bg-light-100 ring-1 ring-light-300 transition-colors hover:ring-dark-500">
-            <div className="relative aspect-square overflow-hidden rounded-t-xl bg-light-200">
+        <Link href={`/products/${id}`} aria-label={name} className="group bg-light-100 transition-colors hover:ring-dark-500">
+            <div className="relative aspect-square overflow-hidden bg-light-200">
                 <Image src={image} alt={name} fill className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="(min-width: 1280px) 360px, (min-width: 1024px) 300px, (min-width: 640px) 45vw, 50vw" />
             </div>
-            <div className="p-4">
+            <div className="p-2">
                 {badge && <CardBadge label={badge.label} tone={badge.tone} />}
-                <div className="my-3 flex justify-between items-baseline gap-3 text-heading-4">
-                    <h3>{name}</h3>
-                    <p>${price}</p>
-                </div>
+                <h3 className="mt-3 text-body-medium">{name}</h3>
                 <p className="text-sm text-gray-600">{description}</p>
                 {meta && <p className="mt-1 text-sm text-light-400">{Array.isArray(meta) ? meta.join(', ') : meta}</p>}
+                <p className="my-3 text-body-medium">${price}</p>
             </div>
         </Link>
     )

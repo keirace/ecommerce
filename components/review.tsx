@@ -2,14 +2,6 @@
 import { Fragment } from "react";
 import Image from "next/image";
 
-type ReviewProps = {
-    name: string;
-    username: string;
-    review: string;
-    rating: number;
-    date: string;
-};
-
 export const StarRating = ({ rating }: { rating: number }) => {
     return (
         <div className="flex gap-1">
@@ -28,7 +20,7 @@ export const StarRating = ({ rating }: { rating: number }) => {
 }
 
 
-const Review = ({ review, rating, name, username, date }: ReviewProps) => {
+const Review = ({ comment, rating, name, username, date }: Review) => {
     return (
         <div className="py-6">
             <h2 className="text-body-medium">{name}</h2>
@@ -37,7 +29,7 @@ const Review = ({ review, rating, name, username, date }: ReviewProps) => {
                 <span className="text-dark-700 ml-2">{username} - {date}</span>
             </div>
             <div>
-                <p className="text-body text-dark-800">{review}</p>
+                <p className="text-body text-dark-800">{comment}</p>
             </div>
         </div>
     );

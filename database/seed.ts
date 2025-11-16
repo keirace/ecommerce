@@ -20,6 +20,19 @@ function randInt(min: number, max: number): number {
 
 async function seed() {
 	try {
+		// Seed users
+		console.log("Seeding users");
+		const userRows = [
+			{ name: "Alice", email: "alice@example.com", username: "alice" },
+			{ name: "Bob", email: "bob@example.com", username: "bob" },
+			{ name: "Charlie", email: "charlie@example.com", username: "charlie" },
+		].map((u) => schema.insertUserSchema.parse(u));
+		for (const row of userRows) {
+			const exists = await db.select().from(schema.users).where(eq(schema.users.email, row.email)).limit(1);
+			if (!exists.length) await db.insert(schema.users).values(row);
+		}
+
+		// Seed filters: genders, colors, sizes
 		console.log("Seeding filters: genders, colors, sizes");
 
 		// Insert genders
@@ -112,14 +125,17 @@ async function seed() {
 
 		// Read images from public/shoes
 		const sourceDir = join(process.cwd(), "public", "shoes");
-        
-        // Create product names based on available image names in public/shoes
-		const productNames = (await readdir(sourceDir)).map((file) => {
-            const name = file.replace(/\.[^/.]+$/, ""); // Remove file extension
-            return name.split("+").map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(" "); // Capitalize words
-        });
 
-		// For each product name, create product, variants, and images
+		// Create product names based on available image names in public/shoes
+		const productNames = (await readdir(sourceDir)).map((file) => {
+			const name = file.replace(/\.[^/.]+$/, ""); // Remove file extension
+			return name
+				.split("+")
+				.map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+				.join(" "); // Capitalize words
+		});
+
+		// For each product name, create product, variants, and images, and reviews
 		for (const productName of productNames) {
 			const product = schema.insertProductSchema.parse({
 				name: productName,
@@ -150,8 +166,8 @@ async function seed() {
 						weight: Math.random() * 2 + 0.5,
 						price: Number(Math.random() * 100 + 50).toFixed(2),
 						salePrice: Math.random() < 0.3 ? (Math.random() * 50 + 30).toFixed(2) : undefined,
-						inStock: randInt(20, 100),
-                        sku: `SKU-${insertedProduct.id.slice(0, 8).toUpperCase()}-${color.slug.toUpperCase()}-${size.slug.toUpperCase()}`,
+						inStock: randInt(0, 100),
+						sku: `SKU-${insertedProduct.id.slice(0, 8).toUpperCase()}-${color.slug.toUpperCase()}-${size.slug.toUpperCase()}`,
 					});
 					const retV = await db.insert(schema.productVariants).values(variant).returning();
 					const insertedVariant = retV[0];
@@ -160,21 +176,26 @@ async function seed() {
 						defaultVariantId = insertedVariant.id;
 					}
 				}
+
+				// Create images for the product
+				const images = [];
+				const pickName = (name: string) => name.replace(/\s/g, "+").toUpperCase();
+
+				const image = schema.insertImageSchema.parse({
+					url: `/shoes/${pickName(productName)}.avif`,
+					productId: insertedProduct.id,
+					variantId: defaultVariantId!,
+					isPrimary: color.id === colorChoices[0].id,
+					sortOrder: 0,
+				});
+				images.push(image);
+
+				await db.insert(schema.images).values(images);
 			}
 
 			if (defaultVariantId) {
 				await db.update(schema.products).set({ defaultVariantId }).where(eq(schema.products.id, insertedProduct.id));
 			}
-
-			const pickName = (name: string) => name.replace(/\s/g, "+").toUpperCase();
-			const images = schema.insertImageSchema.parse({
-				url: "/shoes/" + pickName(productName) + ".avif",
-				productId: insertedProduct.id,
-				isPrimary: true,
-				sortOrder: 0,
-			});
-
-			await db.insert(schema.images).values(images);
 
 			// Assign collections to product
 			const collectionsForProduct: { id: string }[] = Math.random() < 0.5 ? [summer] : ([newArrivals, summer].filter(Boolean) as { id: string }[]);
@@ -185,11 +206,27 @@ async function seed() {
 				});
 			}
 			console.log(`Seeded product: ${productName} with ${variantProducts.length} variants.`);
+
+			// Create reviews for the product
+			const users = await db.select().from(schema.users).limit(3);
+
+			const reviewCount = randInt(3, 10);
+			for (let i = 0; i < reviewCount; i++) {
+				const user = users[randInt(0, users.length - 1)];
+				const review = schema.insertReviewSchema.parse({
+					productId: insertedProduct.id,
+					userId: user.id,
+					name: user.name,
+					rating: randInt(3, 6),
+					comment: `This is a review comment for ${productName}.`,
+				});
+				await db.insert(schema.reviews).values(review);
+			}
 		}
 		console.log("Database seeding completed.");
 	} catch (error) {
 		console.error("Error seeding database:", error);
-        process.exit(1);
+		process.exit(1);
 	}
 }
 
