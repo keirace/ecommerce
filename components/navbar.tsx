@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import {useRouter} from "next/navigation";
 
 const NAV_LINKS = [
     { label: "Men", href: "/products?gender=men" },
@@ -24,6 +25,9 @@ const handleScrollDown = (currentScrollY: React.RefObject<number>, prevScrollY: 
 };
 
 const Navbar = () => {
+
+    const router = useRouter();
+
     const [isOpen, setIsOpen] = useState(false);
     // Removed window access on initial render for SSR compatibility
     const prevScrollY = useRef<number>(0);
@@ -40,6 +44,14 @@ const Navbar = () => {
         };
     }, [isOpen]);
 
+    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const query = formData.get("search") as string;
+        // Redirect to search page with query
+        router.push(`/products?search=${encodeURIComponent(query)}`);
+    };
+
     return (
         <header id="desktop-menu" className="fixed top-0 left-0 right-0 z-40 bg-white transition-transform duration-300">
             <nav className="flex justify-between items-center h-16  px-10">
@@ -55,11 +67,11 @@ const Navbar = () => {
                     ))}
                 </ul>
                 <div className="gap-6 hidden md:flex items-center">
-                    <div className="flex items-center lg:bg-black/5 rounded-4xl hover:bg-black/10 focus:bg-black/10">
+                    <form className="flex items-center lg:bg-black/5 rounded-4xl hover:bg-black/10 focus:bg-black/10" onSubmit={handleSearch}>
                         <label htmlFor="search" className="sr-only">Search</label>
                         <label htmlFor="search" className="cursor-pointer m-2"><Image src="/search.svg" alt="Search" width={20} height={20} /></label>
-                        <input type="text" id="search" placeholder="Search" className="outline-none ml-2 hidden lg:inline" />
-                    </div>
+                        <input type="text" id="search" name="search" placeholder="Search" className="outline-none ml-2 hidden lg:inline " />
+                    </form>
                     <Link href="/favorites" className="p-2 rounded-4xl hover:bg-black/10"><Image src="/heart.svg" alt="Favorites" width={20} height={20} /></Link>
                     <Link href="/cart" className="p-2 rounded-4xl hover:bg-black/10"><Image src="/bag.svg" alt="Cart" width={20} height={20} /></Link>
                 </div>
