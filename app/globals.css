@@ -65,3 +65,10 @@
 input[type="checkbox"] {
 	@apply w-4 h-4 checked:accent-black border border-gray-200 rounded-sm;
 }
+
+button:hover {
+	&:disabled {
+		@apply cursor-auto;
+	}
+	@apply cursor-pointer;
+}
