@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Card from './card';
 
-const Carousel = ({products} : {products: CardProps[]}) => {
+const Carousel = ({ products }: { products: CardProps[] }) => {
     const carouselRef = useRef<HTMLDivElement>(null);
     const [scrollable, setScrollable] = useState<{ left: boolean; right: boolean }>({
         left: false,
