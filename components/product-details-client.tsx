@@ -52,7 +52,7 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
         console.log('Adding to cart:', selectedVariant);
     }
     return (
-        <main className="min-h-screen w-full mx-auto py-16 md:px-32 px-4">
+        <main className="min-h-screen w-full mx-auto py-16 lg:px-32">
 
             {/* Breadcrumbs */}
             <nav className="py-4">
@@ -77,7 +77,7 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
                 {/* Gallery */}
                 <Gallery product={{ image: images.map(img => img.url), name: product.name }} />
                 {/* Product Info */}
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-6 px-4">
                     <header className="flex flex-col gap-2">
                         <h1 className="text-heading-3">
                             {product.name}
@@ -142,7 +142,7 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
             </section>
 
             {/* You Might Also Like */}
-            <Carousel products={recommendedProducts} />
+            <Carousel products={recommendedProducts} className="px-4" />
 
         </main >
     )
