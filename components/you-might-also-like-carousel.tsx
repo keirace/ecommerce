@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Card from './card';
 
-const Carousel = ({ products }: { products: CardProps[] }) => {
+const Carousel = ({ products, className }: { products: CardProps[]; className?: string }) => {
     const carouselRef = useRef<HTMLDivElement>(null);
     const [scrollable, setScrollable] = useState<{ left: boolean; right: boolean }>({
         left: false,
@@ -29,7 +29,7 @@ const Carousel = ({ products }: { products: CardProps[] }) => {
     }, []);
 
     return (
-        <section className="mt-16">
+        <section className={`mt-16 ${className}`}>
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-heading-3 flex">You Might Also Like</h2>
                 <div aria-label="Carousel navigation" className="flex gap-2">
