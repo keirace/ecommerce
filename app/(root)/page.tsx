@@ -1,14 +1,11 @@
 
 import { MOCK_PRODUCTS as products } from "../../lib/constants";
 import Card from "@/components/card";
-import { getCurrentUser } from "@/lib/auth.actions";
 import Image from "next/image";
 import Link from "next/link";
 import { columns } from "@/lib/constants";
 
 export default async function Home() {
-  const currentUser = await getCurrentUser();
-  console.log("Current User:", currentUser);
 
   return (
     <main className="min-h-screen w-full pt-32 px-16 sm:items-start">

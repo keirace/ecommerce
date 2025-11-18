@@ -129,6 +129,8 @@ export const getProductById = async (id: string): Promise<ProductDetail | null> 
 		return null;
 	}
 
+	console.warn(`[getProductById] fetching product with id: ${id}`);
+
 	const result = await db
 		.select({
 			id: schema.products.id,
@@ -252,6 +254,12 @@ export const getProductById = async (id: string): Promise<ProductDetail | null> 
  * @returns { CardProps[] }
  */
 export const getRecommendedProducts = async (id: string, limit: number = 4): Promise<CardProps[]> => {
+	// protect DB from invalid uuid inputs
+	if (!isUuid(id)) {
+		console.warn(`[getRecommendedProducts] invalid uuid provided: ${id}`);
+		return [];
+	}
+
 	const product = await db
 		.select()
 		.from(schema.products)

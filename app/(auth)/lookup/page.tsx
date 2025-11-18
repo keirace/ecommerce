@@ -1,5 +1,5 @@
 import AuthForm from "@/components/auth-form"
-import { doesEmailExist } from "@/lib/auth.actions";
+import { doesEmailExist } from "@/lib/actions/auth.actions";
 
 const Lookup = () => {
     return (

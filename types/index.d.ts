@@ -128,3 +128,26 @@ type Review = {
     rating: number;
     date: string;
 };
+
+type Variant = {
+    id: string;
+    size: string;
+    price: string | null;
+    salePrice?: string | null | undefined;
+    color: string;
+    weight: number;
+    inStock: number;
+    sku: string;
+}
+
+type CartItemProps = {
+    id: string | number;
+    name: string;
+    description: string | null;
+    image: string;
+    price: number;
+    salePrice: number | null;
+    color: string;
+    size: string;
+	quantity: number;
+}

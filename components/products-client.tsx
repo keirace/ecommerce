@@ -49,7 +49,7 @@ export default function ProductsClient({ products, totalCount, }: { products: Pr
     return (
         <main className="min-h-screen w-full py-16 sm:items-start">
 
-            <header id="products-header" className="w-full top-0 sticky bg-light-100 pt-2 pb-4 z-30 transition-all duration-300" >
+            <header id="products-header" className="w-full top-0 sticky bg-light-100 pt-2 pb-4 transition-all duration-300 z-50" >
                 <div className="flex flex-col md:flex-row md:justify-between px-16">
                     <h1 className="text-heading-3 text-dark-900">
                         New <span className="hidden md:inline">({totalCount})</span>
@@ -62,7 +62,7 @@ export default function ProductsClient({ products, totalCount, }: { products: Pr
             </header>
 
             {/* Body */}
-            <section className={`grid grid-cols-1 gap-8 mb-24 transition-all duration-300 md:grid-cols-[240px_1fr] z-50 md:z-20`}>
+            <section className={`grid grid-cols-1 gap-8 mb-24 transition-all duration-300 md:grid-cols-[240px_1fr] z-50 md:z-10`}>
                 <aside style={{ willChange: "transform" }} className={
                     `fixed inset-y-0 bottom-0 z-50 w-full bg-white transform transition-transform duration-300 ease-in-out overflow-auto ` +
                     `${isFilterOpen ? 'translate-y-0' : 'translate-y-full'} ` +
