@@ -5,9 +5,11 @@ import * as schema from "../database/index";
 import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
 import { nextCookies } from "better-auth/next-js";
-import { username } from "better-auth/plugins"
+import { username } from "better-auth/plugins";
 
-dotenv.config({ path: ".env.local" });
+if (process.env.NODE_ENV !== "production" && typeof process.env.DATABASE_URL === "undefined") {
+	dotenv.config({ path: ".env.local" });
+}
 
 export const sessionCookieOptions = {
 	name: "session_token",
@@ -23,12 +25,15 @@ export const sessionCookieOptions = {
 export const auth = betterAuth({
 	secret: process.env.BETTER_AUTH_SECRET,
 	url: process.env.BETTER_AUTH_URL,
-	database: drizzleAdapter(db, { provider: "pg", schema: {
-		user: schema.users,
-		session: schema.sessions,
-		account: schema.accounts,
-		verification: schema.verifications,
-	} }),
+	database: drizzleAdapter(db, {
+		provider: "pg",
+		schema: {
+			user: schema.users,
+			session: schema.sessions,
+			account: schema.accounts,
+			verification: schema.verifications,
+		},
+	}),
 	emailAndPassword: {
 		enabled: true,
 		requireEmailVerification: false,

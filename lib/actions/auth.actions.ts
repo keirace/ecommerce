@@ -49,23 +49,6 @@ export async function doesEmailExist(formData: FormData) {
 	return { ok: true, exists: existingUser.length > 0 };
 }
 
-// export async function createGuestSession() {
-// 	const cookiesStore = await cookies();
-// 	const existing = cookiesStore.get("guest_session");
-// 	if (existing) {
-// 		return { ok: true, sessionToken: existing.value, id: null };
-// 	}
-// 	// const existing = await auth.api.getSession({
-// 	// 	headers: await headers(), // pass the headers
-// 	// });
-// 	// if (existing) {
-// 	// 	return { ok: true, sessionToken: existing.session.token, id: existing.user?.id || null };
-// 	// }
-
-
-// 	return { ok: false, sessionToken: guestSessionToken, id: guest.id || null };
-// }
-
 /**
  * Fetches the current guest session based on the guest_session cookie.
  * @returns
@@ -79,7 +62,7 @@ export async function getGuestSession() {
 	}
 
 	// Clean up expired guest sessions
-	const guestSession = await db.delete(schema.guests).where(and(eq(schema.guests.sessionToken, sessionToken), lt(schema.guests.expiresAt, new Date())));
+	await db.delete(schema.guests).where(and(eq(schema.guests.sessionToken, sessionToken), lt(schema.guests.expiresAt, new Date())));
 
 	return { ok: true, token: sessionToken || null };
 }

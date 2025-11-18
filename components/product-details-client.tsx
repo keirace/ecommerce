@@ -1,5 +1,5 @@
 'use client'
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Gallery from './gallery'
@@ -9,7 +9,7 @@ import CollapsibleColumn from './collapsible-column'
 import Review, { StarRating } from './review'
 import Carousel from './you-might-also-like-carousel'
 import CartModal from './cart-modal'
-import { createCart, getCart, addProductToCart } from '@/lib/actions/cart.actions'
+import {  addProductToCart } from '@/lib/actions/cart.actions'
 
 const detailsColumns = [
     { title: 'Size & Fit', content: 'True to size. We recommend ordering your usual size.', },
