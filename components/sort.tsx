@@ -47,14 +47,14 @@ const Sort = ({ isFilterOpen, setIsFilterOpen }: { isFilterOpen: boolean; setIsF
     }
 
     return (
-        <div className='items-start'>
+        <div className='items-start z-50 bg-white'>
             <div className="hidden md:flex">
                 <button className='mr-4 flex flex-row hover:cursor-pointer' onClick={handleHideFilters} aria-expanded={isFilterOpen}>
                     <span>{isFilterOpen ? 'Hide' : 'Show'} Filters</span>
                     <Image src="filter.svg" alt="filter" width={20} height={20} className='ml-2' />
                 </button>
 
-                <div className="group">
+                <div className="group z-0">
                     <label htmlFor="sort">Sort By: </label>
                     <select id="sort" className='focus:outline-none p-1 text-dark-700 group-hover:cursor-pointer' defaultValue="default" onChange={handleSortChange}>
                         {OPTIONS.map((option) => (

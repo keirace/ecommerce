@@ -53,7 +53,7 @@ const Navbar = () => {
     };
 
     return (
-        <header id="desktop-menu" className="fixed top-0 left-0 right-0 z-40 bg-white transition-transform duration-300">
+        <header id="desktop-menu" className="fixed top-0 left-0 right-0 z-999 bg-white transition-transform duration-300">
             <nav className="flex justify-between items-center h-16  px-10">
                 <Link href="/" aria-label="Home" className="logo"><Image src="/Logo_NIKE.svg" alt="Logo" width={55} height={55} /></Link>
 

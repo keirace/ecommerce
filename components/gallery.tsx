@@ -6,7 +6,7 @@ import Image from 'next/image';
 const Gallery = ({ product }: { product: { image: string[]; name: string; badge?: { label: string; tone: string; }; } }) => {
     const [displayedImageIndex, setDisplayedImageIndex] = useState<number>(0);
     return (
-            <section className="lg:sticky top-10 flex flex-col-reverse lg:flex-row gap-4 lg:max-h-[600px]">
+            <section className="lg:sticky top-10 flex flex-col-reverse lg:flex-row gap-4 lg:max-h-[600px] z-0">
                 <div className="flex flex-row lg:flex-col gap-2 items-start overflow-hidden">
                     {product.image.map((img, index) => (
                         <div key={index} className="bg-black rounded-md" onMouseOver={() => setDisplayedImageIndex(index)}>

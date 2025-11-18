@@ -1,5 +1,5 @@
 'use client'
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Gallery from './gallery'
@@ -8,7 +8,8 @@ import ColorSwatches from './color-swatches'
 import CollapsibleColumn from './collapsible-column'
 import Review, { StarRating } from './review'
 import Carousel from './you-might-also-like-carousel'
-import CartPopup from './cart-popup'
+import CartModal from './cart-modal'
+import { createCart, getCart, addProductToCart } from '@/lib/actions/cart.actions'
 
 const detailsColumns = [
     { title: 'Size & Fit', content: 'True to size. We recommend ordering your usual size.', },
@@ -21,38 +22,46 @@ type ProductDetailsClientProps = {
     variants: ProductDetail['variants'];
     reviews: Review[];
     recommendedProducts: CardProps[];
+    // addProductToCart: (selectedVariant: Variant | null, setIsCartOpen: React.Dispatch<React.SetStateAction<boolean>>) => Promise<void>;
 }
 
 const ProductDetailsClient = ({ product, images, variants, reviews, recommendedProducts }: ProductDetailsClientProps) => {
 
     const defaultVariant = variants.find(v => v.id == product.defaultVariantId)
 
-    const [selectedSize, setSelectedSize] = useState<string | null>(defaultVariant ? defaultVariant.size : null);
+    // Selected options state
     const [selectedColor, setSelectedColor] = useState<string | null>(defaultVariant ? defaultVariant.color : null);
-    const selectedVariant = variants.find(v => v.size === selectedSize && v.color === selectedColor);
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
+    const selectedVariant : Variant | undefined = variants.find(v => v.size === selectedSize && v.color === selectedColor);
 
-    const basePrice = selectedVariant ? selectedVariant.price : variants[0].price;
-    const salePrice = selectedVariant && selectedVariant.salePrice ? selectedVariant.salePrice : null;
-    const displayPrice = salePrice ? salePrice : basePrice;
+    // Pricing calculations
+    const basePrice = selectedVariant ? selectedVariant.price ? parseFloat(selectedVariant.price) : 0 : defaultVariant?.price ? parseFloat(defaultVariant.price) : 0;
+    const salePrice = selectedVariant && selectedVariant.salePrice ? parseFloat(selectedVariant.salePrice) : null;
+    const discount = salePrice ? (((basePrice - salePrice) / basePrice) * 100).toFixed(0) : null;
 
+    // Reviews calculations
     const reviewsCount = reviews.length;
     const averageRating = parseFloat((reviews.reduce((sum, r) => sum + r.rating, 0) / reviewsCount).toFixed(1));
 
     // Cart popup state
     const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
 
+    // useEffect(() => {
+    //     const data = ensureGuestSession();
+    //     console.log("Guest session data:", data);
+    // }, []);
+
     const handleAddtoCart = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         if (!selectedVariant) return;
+
         setIsCartOpen(true);
+        addProductToCart(selectedVariant, setIsCartOpen);
+    };
 
-
-        // Add the selected variant to the cart
-        console.log('Adding to cart:', selectedVariant);
-    }
     return (
-        <main className="min-h-screen w-full mx-auto py-16 lg:px-32">
+        <main className={`min-h-screen w-full mx-auto py-16 lg:px-32`}>
 
             {/* Breadcrumbs */}
             <nav className="py-4">
@@ -69,15 +78,15 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
                 </span>
             </nav>
 
-            {/* Cart popup */}
-            <CartPopup open={isCartOpen} setOpen={setIsCartOpen} />
+            {/* Cart modal */}
+            <CartModal open={isCartOpen} setOpen={setIsCartOpen} product={product} selectedVariant={selectedVariant ?? null} />
 
             {/* Product Details */}
-            <section className={`grid grid-cols-1 gap-10 lg:grid-cols-2 ${isCartOpen ? 'pointer-events-none select-none overflow-hidden' : ''}`}>
+            <section className={`grid grid-cols-1 gap-10 lg:grid-cols-2`}>
                 {/* Gallery */}
                 <Gallery product={{ image: images.map(img => img.url), name: product.name }} />
                 {/* Product Info */}
-                <div className="flex flex-col gap-6 px-4">
+                <div className={`flex flex-col gap-6 px-4`}>
                     <header className="flex flex-col gap-2">
                         <h1 className="text-heading-3">
                             {product.name}
@@ -85,8 +94,10 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
                         <p className="text-body-small text-dark-700">{product.genderLabel}&apos;s Shoes</p>
                     </header>
 
-                    <div className="flex flex-col">
-                        <span className="text-body-medium">${displayPrice}</span>
+                    <div className="flex flex-row gap-2">
+                        {salePrice && <span className="text-body-medium">${salePrice}</span>}
+                        <span className={`${salePrice ? 'line-through text-dark-700 text-body' : 'text-body-medium'}`}>${basePrice}</span>
+                        {discount && <span className="text-green-700 font-semibold">{discount}% Off</span>}
                     </div>
 
                     {/* Color Swatches */}
@@ -138,7 +149,6 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
                         </div>
                     </div>
                 </div>
-
             </section>
 
             {/* You Might Also Like */}

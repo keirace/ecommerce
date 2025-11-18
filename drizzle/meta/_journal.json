@@ -29,6 +29,20 @@
       "when": 1763255834249,
       "tag": "0003_bored_spacker_dave",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1763371308258,
+      "tag": "0004_fat_nighthawk",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1763372197387,
+      "tag": "0005_loose_callisto",
+      "breakpoints": true
     }
   ]
 }

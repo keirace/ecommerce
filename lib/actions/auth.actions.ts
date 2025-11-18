@@ -1,8 +1,8 @@
 "use server";
-import { auth, sessionCookieOptions } from "./auth";
+import { auth, sessionCookieOptions } from "../auth";
 import { cookies, headers } from "next/headers";
-import { db } from "./db";
-import * as schema from "../database/index";
+import { db } from "../db";
+import * as schema from "../../database/index";
 import { eq, and, lt } from "drizzle-orm";
 import { randomUUID } from "crypto";
 
@@ -43,41 +43,44 @@ export async function doesEmailExist(formData: FormData) {
 	return { ok: true, exists: existingUser.length > 0 };
 }
 
-export async function createGuestSession() {
-	const cookiesStore = await cookies();
-	const existing = cookiesStore.get("guest_session");
-	if (existing) {
-		return { ok: true, sessionToken: existing.value };
-	}
+// export async function createGuestSession() {
+// 	const cookiesStore = await cookies();
+// 	const existing = cookiesStore.get("guest_session");
+// 	if (existing) {
+// 		return { ok: true, sessionToken: existing.value, id: null };
+// 	}
+// 	// const existing = await auth.api.getSession({
+// 	// 	headers: await headers(), // pass the headers
+// 	// });
+// 	// if (existing) {
+// 	// 	return { ok: true, sessionToken: existing.session.token, id: existing.user?.id || null };
+// 	// }
 
-	const guestSessionToken = randomUUID();
-	const expiresAt = new Date();
-	expiresAt.setDate(expiresAt.getDate() + 7); // 7 days expiry
 
-	await db.insert(schema.guests).values({
-		sessionToken: guestSessionToken,
-		expiresAt: expiresAt,
-	});
-
-	cookiesStore.set("guest_session", guestSessionToken, sessionCookieOptions);
-
-	return { ok: true, sessionToken: guestSessionToken };
-}
+// 	return { ok: false, sessionToken: guestSessionToken, id: guest.id || null };
+// }
 
 /**
  * Fetches the current guest session based on the guest_session cookie.
  * @returns
  */
-export async function guestSession() {
+export async function getGuestSession() {
 	const cookiesStore = await cookies();
 	const sessionToken = cookiesStore.get("guest_session")?.value;
+	console.log("Fetching guest session for token:", sessionToken);
 	if (!sessionToken) {
-		return null;
+		return { ok: false, token: null };
 	}
 
+	// Clean up expired guest sessions
 	const guestSession = await db.delete(schema.guests).where(and(eq(schema.guests.sessionToken, sessionToken), lt(schema.guests.expiresAt, new Date())));
 
-	return { ok: true, session: guestSession };
+	return { ok: true, token: sessionToken || null };
+}
+
+export async function getGuestBySessionToken(sessionToken: string) {
+	const guest = await db.select().from(schema.guests).where(eq(schema.guests.sessionToken, sessionToken)).limit(1).then(res => res[0] || null);
+	return guest;
 }
 
 /**
@@ -89,10 +92,11 @@ export async function getCurrentUser() {
 		const session = await auth.api.getSession({
 			headers: await headers(), // you need to pass the headers object.
 		});
-		return session?.user ?? null;
+		console.log("Fetched current session:", session);
+		return session?.user ? { ok: true, user: session?.user } : { ok: false, user: null };
 	} catch (error) {
 		console.error("Error fetching session:", error);
-		return null;
+		return { ok: false, user: null };
 	}
 }
 

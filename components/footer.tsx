@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { columns, footerColumns } from "@/lib/constants";
+import { footerColumns } from "@/lib/constants";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -22,13 +22,12 @@ export default function Footer() {
                     {footerColumns.map((col, index) => {
                         const isExpanded = openIndex === index; // check if the current column is expanded
                         return (
-                            <div key={col.title} className="border-b border-light-400 lg:border-none py-5 transition-transform duration-300 hover:cursor-pointer" onClick={expand} aria-expanded={isExpanded}>
-                                <div className="flex items-center justify-between">
+                            <div key={col.title} className="border-b border-light-400 lg:border-none py-5 transition-transform duration-300" >
+                                <div className="flex items-center justify-between hover:cursor-pointer" onClick={expand} aria-expanded={isExpanded} >
                                     <h4 className="text-body-medium">{col.title}</h4>
                                     <Image className={`lg:hidden transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} src="/chevron-down.svg" alt="Arrow" width={16} height={16} />
                                 </div>
-                                <ul className={`space-y-3 transition-all duration-300 lg:max-h-100 lg:mt-5 overflow-hidden ${isExpanded ? "max-h-100 mt-5" : "max-h-0"
-                                    }`}>
+                                <ul className={`space-y-3 transition-all duration-300 lg:max-h-100 lg:mt-5 overflow-hidden ${isExpanded ? "max-h-100 mt-5" : "max-h-0"}`}>
                                     {col.links.map((l) => (
                                         <li key={l}>
                                             <Link

@@ -43,12 +43,12 @@ const Filters = ({ isFilterOpen, setIsFilterOpen }: { isFilterOpen: boolean; set
     };
 
     return (
-        <section className='flex flex-col p-6 md:px-0' aria-labelledby="filter">
+        <section className='flex flex-col p-6 md:px-0 sm:z-0' aria-labelledby="filter">
             <div className="flex md:hidden justify-between items-center mb-6">
                 <h2 id="filter" className='text-body text-dark-800'>Filters</h2>
                 <button className='p-3 rounded-full bg-light-200 hover:bg-light-300 hover:cursor-pointer' onClick={() => setIsFilterOpen(false)}><Image src="/x-lg.svg" alt="Close" width={24} height={24} /></button>
             </div>
-            <div className='mb-6' >
+            <div className='mb-6 z-0' >
                 {
                     filterList.map((filter) => {
                         const key = filter.title.toLowerCase();
