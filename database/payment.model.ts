@@ -1,5 +1,4 @@
 import { pgTable, text, timestamp, uuid, pgEnum } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
 import { orders } from "./order.model";
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
@@ -16,13 +15,6 @@ export const payments = pgTable("payments", {
 	status: paymentStatusEnum("status").notNull().default("pending"),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 });
-
-export const paymentRelations = relations(payments, ({ one }) => ({
-	order: one(orders, {
-		fields: [payments.orderId],
-		references: [orders.id],
-	}),
-}));
 
 export const insertPaymentSchema = createInsertSchema(payments);
 

@@ -1,6 +1,7 @@
 import { pgTable, uuid, text, timestamp, boolean } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { categories, genders, brands } from "./index";
+import { categories } from "./category.model";
+import { genders } from "./filters/gender.model";
+import { brands } from "./brand.model";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const products = pgTable("products", {
@@ -18,21 +19,6 @@ export const products = pgTable("products", {
 		.$onUpdate(() => /* @__PURE__ */ new Date())
 		.notNull(),
 });
-
-export const productsRelations = relations(products, ({ one }) => ({
-	category: one(categories, {
-		fields: [products.categoryId],
-		references: [categories.id],
-	}),
-	genders: one(genders, {
-		fields: [products.genderId],
-		references: [genders.id],
-	}),
-	brands: one(brands, {
-		fields: [products.brandId],
-		references: [brands.id],
-	}),
-}));
 
 export const insertProductSchema = createInsertSchema(products);
 

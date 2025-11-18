@@ -17,3 +17,4 @@ export * from "./order.model";
 export * from "./address.model"
 export * from "./collection.model"
 export * from "./reviews.model"
+export * from "./payment.model"

@@ -1,6 +1,6 @@
 import { pgTable, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { products, users } from "./index";
+import { products } from "./product.model";
+import { users } from "./user.model";
 import { z } from "zod";
 
 export const wishlists = pgTable(
@@ -20,17 +20,6 @@ export const wishlists = pgTable(
 		},
 	]
 );
-
-export const wishlistRelationships = relations(wishlists, ({ one }) => ({
-	user: one(users, {
-		fields: [wishlists.userId],
-		references: [users.id],
-	}),
-	product: one(products, {
-		fields: [wishlists.productId],
-		references: [products.id],
-	}),
-}));
 
 export const insertWishlistSchema = z.object({
 	userId: z.uuid(),

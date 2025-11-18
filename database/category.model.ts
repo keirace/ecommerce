@@ -1,7 +1,4 @@
 import { pgTable, uuid, text, foreignKey } from "drizzle-orm/pg-core";
-import { z } from "zod";
-import { products } from "./product.model";
-import { relations } from "drizzle-orm/relations";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const categories = pgTable(
@@ -20,17 +17,6 @@ export const categories = pgTable(
 		},
 	]
 );
-
-export const categoriesRelations = relations(categories, ({ many, one }) => ({
-	products: many(products),
-	parent: one(categories, {
-		fields: [categories.parentId],
-		references: [categories.id],
-	}),
-	children: many(categories, {
-		relationName: "categories_parent",
-	}),
-}));
 
 export const insertCategorySchema = createInsertSchema(categories);
 

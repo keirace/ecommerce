@@ -1,5 +1,5 @@
 'use client'
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import Link from 'next/link';
 import Carousel from './you-might-also-like-carousel';
 import Image from 'next/image';
@@ -64,11 +64,24 @@ const CartItem = ({ item, setCartItems }: { item: CartItemProps, setCartItems: R
 }
 
 
-const CartClient = ({items}: {items: CartItemProps[]}) => {
-    const [cartItems, setCartItems] = useState<CartItemProps[]>(items);
+const CartClient = () => {
+    const [cartItems, setCartItems] = useState<CartItemProps[]>([]);
+
+    useEffect(() => {
+        const fetchCartItems = async () => {
+            try {
+                const response = await fetch('/api/cart', { credentials: 'include' });
+                const data = await response.json();
+                setCartItems(data.items);
+            } catch (error) {
+                console.error('Error fetching cart items:', error);
+            }
+        };
+        fetchCartItems();
+    }, []);
 
     const totalItems = cartItems.length;
-    const totalPrice = cartItems.reduce((acc, item) => acc + item.price, 0);
+    const totalPrice = totalItems > 0 ? cartItems.reduce((acc, item) => acc + item.price, 0) : 0;
 
     const freeShippingThreshold = 50;
 
@@ -92,7 +105,6 @@ const CartClient = ({items}: {items: CartItemProps[]}) => {
                 <div className='flex flex-col w-full justify-center'>
                     <h2 className='text-heading-3 mb-4'>Bag</h2>
                     <h3 className='lg:hidden border-b border-light-300 pb-8'><span className='text-dark-700'>{totalItems} Item{totalItems === 1 ? "" : "s"} | </span> ${totalPrice.toFixed(2)}</h3>
-                    <Suspense fallback={<div>Loading...</div>}>
                         {totalItems > 0 ? (
                             <>
                                 {cartItems.map((item, index) => <CartItem key={index} item={item} setCartItems={setCartItems} />)}
@@ -104,7 +116,6 @@ const CartClient = ({items}: {items: CartItemProps[]}) => {
                         ) : (
                             <p>Your bag is currently empty.</p>
                         )}
-                    </Suspense>
                 </div>
 
                 {/* Summary */}

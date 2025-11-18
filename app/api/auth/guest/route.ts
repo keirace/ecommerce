@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import * as schema from "@/database/index";
 import { randomUUID } from "crypto";
-import { cookies } from "next/headers";
-import { auth } from "@/lib/auth";
 
 export async function POST() {
 	const guestSessionToken = randomUUID();

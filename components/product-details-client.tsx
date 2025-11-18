@@ -46,18 +46,13 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
     // Cart popup state
     const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
 
-    // useEffect(() => {
-    //     const data = ensureGuestSession();
-    //     console.log("Guest session data:", data);
-    // }, []);
-
     const handleAddtoCart = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         if (!selectedVariant) return;
 
         setIsCartOpen(true);
-        addProductToCart(selectedVariant, setIsCartOpen);
+        addProductToCart(selectedVariant);
     };
 
     return (

@@ -1,6 +1,6 @@
 import { pgTable, uuid, text, timestamp, integer, boolean } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { productVariants, products } from "./index";
+import { products } from "./product.model";
+import { productVariants } from './product-variant.model';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 export const images = pgTable("images", {
@@ -16,17 +16,6 @@ export const images = pgTable("images", {
 		.$onUpdate(() => /* @__PURE__ */ new Date())
 		.notNull(),
 });
-
-export const imageRelations = relations(images, ({ one }) => ({
-	product: one(products, {
-		fields: [images.productId],
-		references: [products.id],
-	}),
-	variant: one(productVariants, {
-		fields: [images.variantId],
-		references: [productVariants.id],
-	}),
-}));
 
 export const insertImageSchema = createInsertSchema(images);
 

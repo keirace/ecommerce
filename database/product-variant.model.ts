@@ -22,24 +22,6 @@ export const productVariants = pgTable("product_variants", {
 		.notNull(),
 });
 
-export const productVariantsRelations = relations(productVariants, ({ one, many }) => ({
-	product: one(products, {
-		fields: [productVariants.productId],
-		references: [products.id],
-	}),
-	color: one(colors, {
-		fields: [productVariants.color],
-		references: [colors.id],
-	}),
-	size: one(sizes, {
-		fields: [productVariants.size],
-		references: [sizes.id],
-	}),
-	orderItems: many(orderItems),
-	cartItems: many(cartItems),
-    images: many(images),
-}));
-
 export const insertProductVariantSchema = createInsertSchema(productVariants);
 
 export const selectProductVariantSchema = createSelectSchema(productVariants);
