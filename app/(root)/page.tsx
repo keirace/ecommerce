@@ -1,11 +1,21 @@
-
-import { MOCK_PRODUCTS as products } from "../../lib/constants";
 import Card from "@/components/card";
 import Image from "next/image";
 import Link from "next/link";
 import { columns } from "@/lib/constants";
+import { getAllProductsByFilter } from "@/lib/actions/products.actions";
 
 export default async function Home() {
+  // Fetch products from the API
+  const res = await getAllProductsByFilter({});
+  const products = res?.products.map((p) => ({
+    id: p.id,
+    name: p.name,
+    description: p.description,
+    image: p.image || "/placeholder.png",
+    price: p.maxPrice === p.minPrice ? p.minPrice : p.minPrice + " - " + p.maxPrice,
+    meta: p.meta,
+    badge: p.badge,
+  })) || [];
 
   return (
     <main className="min-h-screen w-full pt-32 px-16 sm:items-start">
