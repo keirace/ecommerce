@@ -1,6 +1,5 @@
 import { pgTable, uuid, text, boolean, pgEnum } from "drizzle-orm/pg-core";
 import { users } from "./user.model";
-import { relations } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 export const addressTypeEnum = pgEnum("address_type", ["shipping", "billing"]);
@@ -18,13 +17,6 @@ export const addresses = pgTable("addresses", {
 	isDefault: boolean("is_default").default(false).notNull(),
 	type: addressTypeEnum("type").notNull()
 });
-
-export const addressRelations = relations(addresses, ({ one }) => ({
-    user: one(users, {
-        fields: [addresses.userId],
-        references: [users.id],
-    }),
-}));
 
 // Zod schema for inserting a new address
 export const insertAddressSchema = createInsertSchema(addresses);

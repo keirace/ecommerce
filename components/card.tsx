@@ -1,16 +1,6 @@
 import Image from "next/image"
 import Link from "next/link";
 
-// interface CardProps {
-//     title: string;
-//     description: string;
-//     imageSrc: string;
-//     slug: string;
-//     price: number;
-//     meta?: string | string[];
-//     badge?: { label: string; tone?: 'orange' | 'red' | 'green' };
-// }
-
 interface CardBadgeProps {
     label: string;
     tone?: 'orange' | 'red' | 'green' | undefined;

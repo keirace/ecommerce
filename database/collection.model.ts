@@ -1,7 +1,5 @@
 import { pgTable, text, timestamp, uuid, primaryKey } from "drizzle-orm/pg-core";
-import { z } from "zod";
-import { relations } from "drizzle-orm";
-import { products } from "./index";
+import { products } from "./product.model";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const collections = pgTable("collections", {
@@ -28,10 +26,6 @@ export const productCollections = pgTable(
 		},
 	]
 );
-
-export const collectionRelations = relations(collections, ({ many }) => ({
-	products: many(products),
-}));
 
 export const insertCollectionSchema = createInsertSchema(collections);
 

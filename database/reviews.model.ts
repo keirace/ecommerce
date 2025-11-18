@@ -1,6 +1,7 @@
 import { pgTable, uuid, text, integer, timestamp } from "drizzle-orm/pg-core";
-import { relations, sql } from "drizzle-orm";
-import { products, users } from "./index";
+import { sql } from "drizzle-orm";
+import { products } from "./product.model";
+import { users } from "./user.model";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const reviews = pgTable(
@@ -19,13 +20,6 @@ export const reviews = pgTable(
 	},
 	() => [{ ratingRange: sql`CHECK (rating >= 1 AND rating <= 5)` }]
 );
-
-export const reviewsRelations = relations(reviews, ({ one }) => ({
-	product: one(products, {
-		fields: [reviews.productId],
-		references: [products.id],
-	}),
-}));
 
 export const insertReviewSchema = createInsertSchema(reviews);
 

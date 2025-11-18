@@ -1,7 +1,7 @@
 import { pgTable, timestamp, uuid, integer } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { productVariants, users, guests } from "./index";
-// import { z } from "zod";
+import { productVariants } from './product-variant.model';
+import { users } from "./user.model";
+import { guests } from "./guest.model";
 import {createInsertSchema, createSelectSchema} from 'drizzle-zod';
 
 export const cart = pgTable("cart", {
@@ -22,29 +22,6 @@ export const cartItems = pgTable("cart_items", {
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
-
-export const cartRelationships = relations(cart, ({ one, many }) => ({
-	user: one(users, {
-		fields: [cart.userId],
-		references: [users.id],
-	}),
-	guest: one(guests, {
-		fields: [cart.guestId],
-		references: [guests.id],
-	}),
-	items: many(cartItems),
-}));
-
-export const cartItemRelationships = relations(cartItems, ({ one }) => ({
-    cart: one(cart, {
-        fields: [cartItems.cartId],
-        references: [cart.id],
-    }),
-    variant: one(productVariants, {
-        fields: [cartItems.variantId],
-        references: [productVariants.id],
-    }),
-}));
 
 export const insertCartSchema = createInsertSchema(cart);
 export const selectCartSchema = createSelectSchema(cart);

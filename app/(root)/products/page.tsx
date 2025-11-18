@@ -1,7 +1,6 @@
 import { getAllProductsByFilter } from '@/lib/actions/products.actions';
 import ProductsClient from '@/components/products-client';
 import { normalizeProductFilters } from '@/lib/query';
-// import { MOCK_PRODUCTS } from '@/lib/constants';
 
 type searchParams = {
     [key: string]: string | string[] | undefined;
