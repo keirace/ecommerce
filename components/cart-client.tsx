@@ -5,8 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { incrementCartItemQuantity, removeCartItem } from '@/lib/actions/cart.actions';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
 const CartItem = ({ item, setCartItems }: { item: CartItemProps, setCartItems: React.Dispatch<React.SetStateAction<CartItemProps[]>> }) => {
     const handleRemoveItem = (itemId: string | number) => {
         if (!itemId) return;
@@ -72,7 +70,7 @@ const CartClient = () => {
     useEffect(() => {
         const fetchCartItems = async () => {
             try {
-                const response = await fetch(`${BASE_URL}/api/cart`, { credentials: 'include' });
+                const response = await fetch("/api/cart", { credentials: 'include' });
                 const data = await response.json();
                 setCartItems(data.items);
             } catch (error) {
