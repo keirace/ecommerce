@@ -5,6 +5,7 @@ import * as schema from "../database/index";
 import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
 import { nextCookies } from "better-auth/next-js";
+import { username } from "better-auth/plugins"
 
 dotenv.config({ path: ".env.local" });
 
@@ -49,5 +50,5 @@ export const auth = betterAuth({
 			generateId: () => uuidv4(), // Use UUID v4 for IDs
 		},
 	},
-	plugins: [nextCookies()], // Allow better-auth to read cookies in server side Next.js environment
+	plugins: [nextCookies(), username()], // Allow better-auth to read cookies in server side Next.js environment
 });

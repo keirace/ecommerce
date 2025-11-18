@@ -3,9 +3,10 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const users = pgTable("users", {
 	id: uuid().primaryKey().defaultRandom(),
-	username: text("username").unique().notNull(),
+	username: text("username").unique(),
+	displayUsername: text("display_username"),
 	email: text("email").unique().notNull(),
-    emailVerified: boolean("email_verified").default(false).notNull(),
+	emailVerified: boolean("email_verified").default(false).notNull(),
 	name: text("name").notNull(),
 	age: integer("age"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),

@@ -19,11 +19,17 @@ export async function signOut() {
 	await auth.api.signOut({ headers: await headers() });
 	return { ok: true };
 }
+const generateUsername = (email: string) => {
+	const baseUsername = email.split('@')[0];
+	const randomSuffix = Math.floor(1000 + Math.random() * 9000); // 4 digit random number
+	return `${baseUsername}${randomSuffix}`;
+};
 
 export async function signUp(formData: FormData) {
 	const rawData = {
 		name: formData.get("name") as string,
 		email: formData.get("email") as string,
+		username: generateUsername(formData.get("email") as string),
 		password: formData.get("password") as string,
 	};
 	const response = await auth.api.signUpEmail({ body: rawData });
