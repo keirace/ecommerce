@@ -43,6 +43,13 @@
       "when": 1763372197387,
       "tag": "0005_loose_callisto",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1763438823915,
+      "tag": "0006_noisy_nico_minoru",
+      "breakpoints": true
     }
   ]
 }

@@ -13,6 +13,7 @@ type Props = {
 export default function AuthForm({ mode, email, onSubmit }: Props) {
   const router = useRouter();
   const [show, setShow] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,12 +37,17 @@ export default function AuthForm({ mode, email, onSubmit }: Props) {
       }
     } catch (error) {
       console.error("Error submitting form:", error);
+      setError("Invalid email or password");
+      setTimeout(() => setError(null), 5000); // Clear error after 5 seconds
     }
   }
 
   return (
     <div className="min-h-screen mx-auto max-w-xl space-y-6">
       <div className="flex flex-col items-center gap-10 p-10">
+        {error && (<div className="fixed top-4 right-4 bg-red-700 text-white px-4 py-2 rounded-2xl">
+          {error}
+        </div>)}
 
         <Image src="/Logo_NIKE.svg" alt="Nike Logo" width={60} height={60} />
         <h2 className="text-heading-3">{mode === 'Lookup' ? 'Enter your email to join us or sign in.' : mode === 'Sign In' ? 'Welcome back!' : 'Create an account'}</h2>
