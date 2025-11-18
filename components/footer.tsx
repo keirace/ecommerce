@@ -10,7 +10,12 @@ export default function Footer() {
 
     const expand = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const target = e.currentTarget;
-        const index = Array.from(target.parentElement!.children).indexOf(target);
+        const parent = target.parentElement;
+        const grandparent = parent?.parentElement;
+        if (!parent || !grandparent) {
+            return;
+        }
+        const index = Array.from(grandparent.children).indexOf(parent);
         setOpenIndex(openIndex === index ? null : index);
     };
 
