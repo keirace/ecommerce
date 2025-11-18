@@ -49,7 +49,7 @@ A full-stack Nike-inspired ecommerce platform built with modern web technologies
 ## Technical Architecture
 
 ### Frontend
-- **Next.js 15** with App Router for SSR and client-side routing
+- **Next.js 16** with App Router for SSR and client-side routing
 - **React 19** for component architecture
 - **TypeScript** for type safety
 - **Tailwind CSS** for styling with custom design system
@@ -117,6 +117,7 @@ A full-stack Nike-inspired ecommerce platform built with modern web technologies
    BETTER_AUTH_SECRET=your-secret-key
    BETTER_AUTH_URL=http://localhost:3000
    NODE_ENV=development
+   NEXT_PUBLIC_BASE_URL=http://localhost:3000
    ```
 
 4. **Database Setup**
@@ -193,6 +194,8 @@ Visit `http://localhost:3000` to see the application.
 // Guest session creation
 POST /api/auth/guest
 → Creates guest record + httpOnly cookie
+GET /api/cart
+→ Fetches all cart items
 
 // Cart merge on login
 → Merge guest cart into user cart

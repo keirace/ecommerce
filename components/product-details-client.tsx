@@ -22,7 +22,6 @@ type ProductDetailsClientProps = {
     variants: ProductDetail['variants'];
     reviews: Review[];
     recommendedProducts: CardProps[];
-    // addProductToCart: (selectedVariant: Variant | null, setIsCartOpen: React.Dispatch<React.SetStateAction<boolean>>) => Promise<void>;
 }
 
 const ProductDetailsClient = ({ product, images, variants, reviews, recommendedProducts }: ProductDetailsClientProps) => {

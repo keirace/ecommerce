@@ -4,7 +4,8 @@ import { cookies, headers } from "next/headers";
 import { db } from "../db";
 import * as schema from "../../database/index";
 import { eq, and, lt } from "drizzle-orm";
-import { randomUUID } from "crypto";
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 export async function signIn(formData: FormData) {
 	const rawData = {
@@ -19,6 +20,7 @@ export async function signOut() {
 	await auth.api.signOut({ headers: await headers() });
 	return { ok: true };
 }
+
 const generateUsername = (email: string) => {
 	const baseUsername = email.split('@')[0];
 	const randomSuffix = Math.floor(1000 + Math.random() * 9000); // 4 digit random number
@@ -108,4 +110,17 @@ export async function upgradeGuestToUser() {
 
 export async function mergeGuestCartToUser() {
 	await upgradeGuestToUser();
+}export async function ensureGuestSession(): Promise<{ ok: boolean; sessionToken: string | null; }> {
+    const response = await getGuestSession();
+    const token = response.token;
+    console.log("Current session in ensureGuestSession:", token);
+
+    if (!token) {
+        const response = await fetch(`${BASE_URL}/api/auth/guest`, { method: "POST", credentials: "include" });
+        const data = await response.json();
+        console.log("Created guest session:", data);
+        return data;
+    }
+    return { ok: true, sessionToken: token };
 }
+

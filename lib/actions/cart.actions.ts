@@ -2,7 +2,7 @@
 import { db } from "@/lib/db";
 import * as schema from "@/database/index";
 import { eq, and, SQL, desc, sql } from "drizzle-orm";
-import { ensureGuestSession } from "@/app/(root)/products/[id]/page";
+import { ensureGuestSession } from './auth.actions';
 import { getCurrentUser } from "@/lib/actions/auth.actions";
 
 export const addProductToCart = async (selectedVariant: Variant | null) => {
