@@ -191,14 +191,8 @@ Visit `http://localhost:3000` to see the application.
 ### Cart Management
 ```typescript
 // Guest session creation
-POST /api/guest-session
+POST /api/auth/guest
 → Creates guest record + httpOnly cookie
-
-// Add to cart
-POST /api/cart/add
-→ Reads guest/user session
-→ Creates cart if needed
-→ Upserts cart items
 
 // Cart merge on login
 → Merge guest cart into user cart
