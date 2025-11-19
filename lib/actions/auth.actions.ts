@@ -5,14 +5,13 @@ import { db } from "../db";
 import * as schema from "../../database/index";
 import { eq, and, lt } from "drizzle-orm";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
 export async function signIn(formData: FormData) {
 	const rawData = {
 		email: formData.get("email") as string,
 		password: formData.get("password") as string,
 	};
 	const response = await auth.api.signInEmail({ body: rawData });
+	await mergeGuestCartToUser(response.user.id!);
 	return { ok: true, userId: response.user?.id };
 }
 
@@ -35,7 +34,7 @@ export async function signUp(formData: FormData) {
 		password: formData.get("password") as string,
 	};
 	const response = await auth.api.signUpEmail({ body: rawData });
-	await upgradeGuestToUser();
+	await mergeGuestCartToUser(response.user.id!);
 	return { ok: true, userId: response.user?.id };
 }
 
@@ -92,10 +91,6 @@ export async function getCurrentUser() {
 }
 
 export async function deleteGuestSession() {
-	// Implement guest session deletion logic here
-}
-
-export async function upgradeGuestToUser() {
 	const cookiesStore = await cookies();
 	const sessionToken = cookiesStore.get("guest_session")?.value;
 	if (!sessionToken) {
@@ -108,19 +103,91 @@ export async function upgradeGuestToUser() {
 	cookiesStore.delete("guest_session");
 }
 
-export async function mergeGuestCartToUser() {
-	await upgradeGuestToUser();
-}export async function ensureGuestSession(): Promise<{ ok: boolean; sessionToken: string | null; }> {
-    const response = await getGuestSession();
-    const token = response.token;
-    console.log("Current session in ensureGuestSession:", token);
+export async function mergeGuestCartToUser(userId: string) {
+	const cookiesStore = await cookies();
+	const sessionToken = cookiesStore.get("guest_session")?.value;
+	if (!sessionToken) {
+		return;
+	}
 
-    if (!token) {
-        const response = await fetch(`${BASE_URL}/api/auth/guest`, { method: "POST", credentials: "include" });
-        const data = await response.json();
-        console.log("Created guest session:", data);
-        return data;
-    }
-    return { ok: true, sessionToken: token };
+	// Get the guest cart items
+	const guest = await db
+		.select({ id: schema.guests.id })
+		.from(schema.guests)
+		.where(eq(schema.guests.sessionToken, sessionToken))
+		.limit(1)
+		.then(res => res[0] || null);
+
+	if (!guest) {
+		return;
+	}
+	
+	// Upgrade guest to user by deleting guest session
+	await deleteGuestSession();
+
+	const guestCart = await db
+		.select()
+		.from(schema.cart)
+		.where(eq(schema.cart.guestId, guest.id))
+		.limit(1)
+		.then(res => res[0] || null);
+
+	if (!guestCart) {
+		return;
+	}
+
+	// Check if user already has a cart
+	const userCart = await db
+		.select()
+		.from(schema.cart)
+		.where(eq(schema.cart.userId, userId))
+		.limit(1)
+		.then(res => res[0] || null);
+
+	if (userCart) {
+		// Merge items from guest cart to user cart
+		const guestCartItems = await db
+			.select()
+			.from(schema.cartItems)
+			.where(eq(schema.cartItems.cartId, guestCart.id));
+
+		for (const item of guestCartItems) {
+			// Check if item already exists in user cart
+			const existingItem = await db
+				.select()
+				.from(schema.cartItems)
+				.where(and(eq(schema.cartItems.cartId, userCart.id), eq(schema.cartItems.variantId, item.variantId!)))
+				.limit(1)
+				.then(res => res[0] || null);
+
+			if (existingItem) {
+				// Update quantity
+				await db
+					.update(schema.cartItems)
+					.set({ quantity: existingItem.quantity + item.quantity })
+					.where(eq(schema.cartItems.id, existingItem.id));
+			} else {
+				// Move item to user cart
+				await db
+					.insert(schema.cartItems)
+					.values({
+						cartId: userCart.id,
+						variantId: item.variantId,
+						quantity: item.quantity,
+					});
+			}
+		}
+
+		// Delete guest cart and its items
+		await db.delete(schema.cartItems).where(eq(schema.cartItems.cartId, guestCart.id));
+		await db.delete(schema.cart).where(eq(schema.cart.id, guestCart.id));
+	} else {
+		// If user has no cart, simply update the guest cart to be the user's cart
+		await db
+			.update(schema.cart)
+			.set({ userId: userId, guestId: null })
+			.where(eq(schema.cart.id, guestCart.id));
+	}
+	console.log(`Merged guest cart ${guestCart.id} into user ${userId} cart.`);
 }
 

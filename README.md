@@ -117,7 +117,6 @@ A full-stack Nike-inspired ecommerce platform built with modern web technologies
    BETTER_AUTH_SECRET=your-secret-key
    BETTER_AUTH_URL=http://localhost:3000
    NODE_ENV=development
-   NEXT_PUBLIC_BASE_URL=http://localhost:3000
    ```
 
 4. **Database Setup**

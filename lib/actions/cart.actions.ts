@@ -2,53 +2,37 @@
 import { db } from "@/lib/db";
 import * as schema from "@/database/index";
 import { eq, and, SQL, desc, sql } from "drizzle-orm";
-import { ensureGuestSession } from './auth.actions';
-import { getCurrentUser } from "@/lib/actions/auth.actions";
 
-export const addProductToCart = async (selectedVariant: Variant | null) => {
+export const addProductToCart = async (selectedVariant: Variant | null, userId: string | null, sessionToken: string | null) => {
 	if (!selectedVariant) return;
 
-	const userResp = await getCurrentUser();
-    let cartId: string | null = null;
+	let cartId: string | null = null;
 
-	if (userResp.ok) {
-		console.log("User is logged in with userId:", userResp.user?.id);
+	if (userId) {
         // Get or create cart
-        const cart = await getCart(userResp.user?.id || null, null);
+        const cart = await getCart(userId, null);
         cartId = cart?.id;
         if (!cartId) {
-            cartId = await createCart(userResp.user?.id || null, null);
-            console.log("Created new cart with id:", cartId);
-        } else {
-            console.log("Using existing cart with id:", cartId);
+            cartId = await createCart(userId, null);
         }
 	} else {
-		console.log("User not logged in, ensuring guest session");
-		const data = await ensureGuestSession();
-
-		console.log("Guest session data on add to cart:", data);
-		if (!data.ok || !data.sessionToken) {
-			console.error("Failed to ensure guest session");
+		if (!sessionToken) {
+			console.error("No session token provided for guest user.");
 			return;
 		}
-        
         // fetch guest id
 		const guestId = await db
 			.select({ id: schema.guests.id })
 			.from(schema.guests)
-			.where(eq(schema.guests.sessionToken, data.sessionToken))
+			.where(eq(schema.guests.sessionToken, sessionToken))
 			.limit(1)
 			.then((res) => res[0]?.id || null);
-		console.log("Fetched guestId:", guestId);
 
 		// Get or create cart
 		const cart = await getCart(null, guestId);
-		let cartId = cart?.id;
+		cartId = cart?.id;
 		if (!cartId) {
 			cartId = await createCart(null, guestId);
-			console.log("Created new cart with id:", cartId);
-		} else {
-			console.log("Using existing cart with id:", cartId);
 		}
 	}
     // Ensure cartId is set
@@ -59,7 +43,6 @@ export const addProductToCart = async (selectedVariant: Variant | null) => {
 
 	// Add item to cart
 	await addCartItem(cartId, selectedVariant.id, 1);
-	console.log(`Added variant ${selectedVariant.id} to cart ${cartId}`);
 };
 
 export const getCart = async (userId: string | null, guestId: string | null) => {
@@ -92,10 +75,8 @@ export const createCart = async (userId: string | null, guestId: string | null):
 	}
 	let result;
 	if (userId) {
-		console.info(`[createCart] Creating cart for userId: ${userId}`);
 		result = await db.insert(schema.cart).values({ userId: userId }).returning({ id: schema.cart.id });
 	} else if (guestId) {
-		console.info(`[createCart] Creating cart for guestId: ${guestId}`);
 		result = await db.insert(schema.cart).values({ guestId: guestId }).returning({ id: schema.cart.id });
 	}
 	return result![0]?.id || "";
