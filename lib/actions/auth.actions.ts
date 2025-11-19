@@ -82,7 +82,6 @@ export async function getCurrentUser() {
 		const session = await auth.api.getSession({
 			headers: await headers(), // you need to pass the headers object.
 		});
-		console.log("Fetched current session:", session);
 		return session?.user ? { ok: true, user: session?.user } : { ok: false, user: null };
 	} catch (error) {
 		console.error("Error fetching session:", error);

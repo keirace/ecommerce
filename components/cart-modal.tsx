@@ -11,7 +11,7 @@ type variant = {
     salePrice?: string | null;
 }
 
-const CartModal = ({ open, setOpen, product, selectedVariant }: { open: boolean, setOpen: (open: boolean) => void, product: ProductDetail['product'], selectedVariant: variant | null }) => {
+const CartModal = ({ open, setOpen, product, selectedVariant, from, image }: { open: boolean, setOpen: (open: boolean) => void, product: ProductDetail['product'], selectedVariant: variant | null, from: 'favorites' | 'cart', image: string }) => {
 
     useEffect(() => {
         if (open) {
@@ -52,7 +52,7 @@ const CartModal = ({ open, setOpen, product, selectedVariant }: { open: boolean,
 
                     {/* Product details */}
                     <div className="flex items-center gap-4">
-                        <Image src="/product-sample.jpg" alt="Product" width={80} height={80} className="rounded-md" />
+                        <Image src={image} alt="Product" width={80} height={80} className="rounded-md" />
                         <div>
                             <p className="font-medium">{product.name}</p>
                             <p className="text-sm text-gray-600">Size: {selectedVariant?.size}</p>
@@ -62,14 +62,23 @@ const CartModal = ({ open, setOpen, product, selectedVariant }: { open: boolean,
                     </div>
 
                     {/* Actions */}
-                    <div className="mt-4 py-3 flex flex-col gap-3">
-                        <Link href="/cart" className="block">
-                            <button className="w-full border-2 border-light-300 px-4 py-3 rounded-full hover:border-black">View Bag</button>
-                        </Link>
-                        <Link href="/checkout" className="block">
-                            <button className="w-full bg-dark-900 text-light-100 px-4 py-4 rounded-full hover:bg-dark-700">Checkout</button>
-                        </Link>
-                    </div>
+                    {from === 'favorites' && (
+                        <div className="mt-4 py-3 flex flex-col gap-3">
+                            <Link href="/favorites" className="block">
+                                <button className="w-full bg-dark-900 text-light-100 px-4 py-4 rounded-full hover:bg-dark-700">View Favorites</button>
+                            </Link>
+                        </div>
+                    )}
+
+                    {from === 'cart' && (
+                        <div className="mt-4 py-3 flex flex-col gap-3">
+                            <Link href="/cart" className="block">
+                                <button className="w-full border-2 border-light-300 px-4 py-3 rounded-full hover:border-black">View Bag</button>
+                            </Link>
+                            <Link href="/checkout" className="block">
+                                <button className="w-full bg-dark-900 text-light-100 px-4 py-4 rounded-full hover:bg-dark-700">Checkout</button>
+                            </Link>
+                        </div>)}
                 </div>
             </div>
         </>
