@@ -13,6 +13,7 @@ import { addProductToCart } from '@/lib/actions/cart.actions'
 import { getCurrentUser } from "@/lib/actions/auth.actions";
 import { ensureGuestSession } from '@/lib/guest'
 import { addProductToFavorites } from '@/lib/actions/wishlist.actions'
+import { useRouter } from 'next/navigation';
 
 const detailsColumns = [
     { title: 'Size & Fit', content: 'True to size. We recommend ordering your usual size.', },
@@ -71,10 +72,15 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
         addProductToCart(selectedVariant, userId, sessionToken);
     };
 
+    const router = useRouter();
     const handleFavorite = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         const { user } = await getCurrentUser();
+        if (!user) {
+            router.push('/lookup');
+            return;
+        }
         const res = await addProductToFavorites(product.id, user!.id);
         
         if (!res?.ok) {
