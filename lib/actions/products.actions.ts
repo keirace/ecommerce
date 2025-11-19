@@ -129,8 +129,6 @@ export const getProductById = async (id: string): Promise<ProductDetail | null> 
 		return null;
 	}
 
-	console.warn(`[getProductById] fetching product with id: ${id}`);
-
 	const result = await db
 		.select({
 			id: schema.products.id,

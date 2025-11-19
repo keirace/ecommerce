@@ -9,9 +9,11 @@ import CollapsibleColumn from './collapsible-column'
 import Review, { StarRating } from './review'
 import Carousel from './you-might-also-like-carousel'
 import CartModal from './cart-modal'
-import {  addProductToCart } from '@/lib/actions/cart.actions'
+import { addProductToCart } from '@/lib/actions/cart.actions'
 import { getCurrentUser } from "@/lib/actions/auth.actions";
 import { ensureGuestSession } from '@/lib/guest'
+import { addProductToFavorites } from '@/lib/actions/wishlist.actions'
+import { useRouter } from 'next/navigation';
 
 const detailsColumns = [
     { title: 'Size & Fit', content: 'True to size. We recommend ordering your usual size.', },
@@ -43,7 +45,7 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
     // Selected options state
     const [selectedColor, setSelectedColor] = useState<string | null>(defaultVariant ? defaultVariant.color : null);
     const [selectedSize, setSelectedSize] = useState<string | null>(null);
-    const selectedVariant : Variant | undefined = variants.find(v => v.size === selectedSize && v.color === selectedColor);
+    const selectedVariant: Variant | undefined = variants.find(v => v.size === selectedSize && v.color === selectedColor);
 
     // Pricing calculations
     const basePrice = selectedVariant ? selectedVariant.price ? parseFloat(selectedVariant.price) : 0 : defaultVariant?.price ? parseFloat(defaultVariant.price) : 0;
@@ -56,6 +58,7 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
 
     // Cart popup state
     const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+    const [isFavoriteOpen, setIsFavoriteOpen] = useState<boolean>(false);
 
     const handleAddtoCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -67,6 +70,24 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
         const { userId, sessionToken } = await getUserOrGuest();
         console.log("User or Guest info on add to cart:", { userId, sessionToken });
         addProductToCart(selectedVariant, userId, sessionToken);
+    };
+
+    const router = useRouter();
+    const handleFavorite = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
+        const { user } = await getCurrentUser();
+        if (!user) {
+            router.push('/lookup');
+            return;
+        }
+        const res = await addProductToFavorites(product.id, user!.id);
+        
+        if (!res?.ok) {
+            alert("Product is already in your favorites.");
+            return;
+        }
+        setIsFavoriteOpen(true);
     };
 
     return (
@@ -87,8 +108,9 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
                 </span>
             </nav>
 
-            {/* Cart modal */}
-            <CartModal open={isCartOpen} setOpen={setIsCartOpen} product={product} selectedVariant={selectedVariant ?? null} />
+            {/* Modal */}
+            <CartModal open={isCartOpen} setOpen={setIsCartOpen} product={product} selectedVariant={selectedVariant ?? null} from="cart" image={images[0].url} />
+            <CartModal open={isFavoriteOpen} setOpen={setIsFavoriteOpen} product={product} selectedVariant={selectedVariant ?? null} from="favorites" image={images[0].url} />
 
             {/* Product Details */}
             <section className={`grid grid-cols-1 gap-10 lg:grid-cols-2`}>
@@ -119,7 +141,7 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
                         <button className="text-body-medium w-full flex items-center justify-center gap-2 py-3 rounded-full text-bold bg-dark-900 text-light-100 hover:bg-dark-700 transition-colors disabled:bg-light-400 disabled:text-dark-500" disabled={!selectedVariant || !selectedVariant.inStock} onClick={(e) => handleAddtoCart(e)}>
                             Add to Cart
                         </button>
-                        <button className="text-body-medium w-full flex items-center justify-center gap-2 py-2 rounded-full border-2 border-light-400 hover:border-black">
+                        <button className="text-body-medium w-full flex items-center justify-center gap-2 py-2 rounded-full border-2 border-light-400 hover:border-black" onClick={(e) => handleFavorite(e)}>
                             Favorite <Image src="/heart.svg" alt="Favorite" width={24} height={24} />
                         </button>
                     </div>

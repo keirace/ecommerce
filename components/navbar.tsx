@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {useRouter} from "next/navigation";
+import { getCurrentUser } from "@/lib/actions/auth.actions";
 
 const NAV_LINKS = [
     { label: "Men", href: "/products?gender=men" },
@@ -52,10 +53,18 @@ const Navbar = () => {
         router.push(`/products?search=${encodeURIComponent(query)}`);
     };
 
+    const handleSignIn = async () => {
+        if ((await getCurrentUser()).ok) {
+            router.push('/profile');
+        } else {
+            router.push('/lookup');
+        }
+    };
+
     return (
         <header id="desktop-menu" className="fixed top-0 left-0 right-0 z-999 bg-white transition-transform duration-300">
             <nav className="flex justify-between items-center h-16  px-10">
-                <Link href="/" aria-label="Home" className="logo"><Image src="/Logo_NIKE.svg" alt="Logo" width={55} height={55} /></Link>
+                <Link href="/" aria-label="Home" className="logo"><Image src="/Logo_NIKE.svg" alt="Logo" width={55} height={55} preload={true} /></Link>
 
                 <ul className="gap-8 hidden md:flex font-semibold">
                     {NAV_LINKS.map((link) => (
@@ -66,12 +75,15 @@ const Navbar = () => {
                         </li>
                     ))}
                 </ul>
-                <div className="gap-6 hidden md:flex items-center">
+                
+                <div className="flex gap-2 justify-end">
+                <div className="gap-2 flex items-center">
                     <form className="flex items-center lg:bg-black/5 rounded-4xl hover:bg-black/10 focus:bg-black/10" onSubmit={handleSearch}>
                         <label htmlFor="search" className="sr-only">Search</label>
                         <label htmlFor="search" className="cursor-pointer m-2"><Image src="/search.svg" alt="Search" width={20} height={20} /></label>
                         <input type="text" id="search" name="search" placeholder="Search" className="outline-none ml-2 hidden lg:inline " />
                     </form>
+                    <button onClick={() => handleSignIn()} className="p-2 rounded-4xl hover:bg-black/10"><Image src="/person.svg" alt="Sign In" width={22} height={22} /></button>
                     <Link href="/favorites" className="p-2 rounded-4xl hover:bg-black/10"><Image src="/heart.svg" alt="Favorites" width={20} height={20} /></Link>
                     <Link href="/cart" className="p-2 rounded-4xl hover:bg-black/10"><Image src="/bag.svg" alt="Cart" width={20} height={20} /></Link>
                 </div>
@@ -82,7 +94,7 @@ const Navbar = () => {
                     <div className={`fixed inset-0 top-15 h-lvh bg-black/30 transition-opacity ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`} onClick={() => setIsOpen(false)} aria-hidden={!isOpen} />
 
                     {/* hamburger button */}
-                    <button className="cursor-pointer p-2" aria-label="Menu" aria-controls="mobile-menu" aria-expanded={isOpen} onClick={() => setIsOpen(!isOpen)}>
+                    <button className="cursor-pointer px-2 py-3 rounded-4xl hover:bg-black/10" aria-label="Menu" aria-controls="mobile-menu" aria-expanded={isOpen} onClick={() => setIsOpen(!isOpen)}>
                         <span className="sr-only">Toggle navigation</span> {/** screen reader only */}
                         <span className={`block h-0.5 w-6 bg-dark-900 duration-300  origin-center ${isOpen ? "translate-y-0.5 rotate-45" : "mb-1"}`}></span>
                         <span className={`block h-0.5 w-6 bg-dark-900 ${isOpen ? "opacity-0" : "mb-1"}`}></span>
@@ -107,6 +119,7 @@ const Navbar = () => {
                             </li>
                         </ul>
                     </div>
+                </div>
                 </div>
             </nav>
         </header>

@@ -4,6 +4,9 @@ import Link from 'next/link';
 // import Carousel from './you-might-also-like-carousel';
 import Image from 'next/image';
 import { incrementCartItemQuantity, removeCartItem } from '@/lib/actions/cart.actions';
+import { addProductToFavorites } from '@/lib/actions/wishlist.actions';
+import { getCurrentUser } from '@/lib/actions/auth.actions';
+import { useRouter } from 'next/navigation';
 
 const CartItem = ({ item, setCartItems }: { item: CartItemProps, setCartItems: React.Dispatch<React.SetStateAction<CartItemProps[]>> }) => {
     const handleRemoveItem = (itemId: string | number) => {
@@ -25,9 +28,14 @@ const CartItem = ({ item, setCartItems }: { item: CartItemProps, setCartItems: R
         incrementCartItemQuantity(itemId, 1);
     };
 
-    const handleAddToFavorites = (itemId: string | number) => {
+    const router = useRouter();
+    const handleAddToFavorites = async (itemId: string | number) => {
         if (!itemId) return;
-        console.log("Add to favorites:", itemId);
+        const { user } = await getCurrentUser();
+        if (!user) {
+            router.push('/lookup');
+        }
+        addProductToFavorites((itemId), user!.id);
     };
 
     return (
@@ -57,7 +65,7 @@ const CartItem = ({ item, setCartItems }: { item: CartItemProps, setCartItems: R
                     <span className=''>{item.quantity}</span>
                     <button className='p-3 hover:text-dark-700 hover:bg-light-300 rounded-full' onClick={() => handleAddItem(item.id)}><Image src="/plus-lg.svg" alt="Add item" width={16} height={16} /></button>
                 </div>
-                <button className='p-3 border border-light-300 hover:text-dark-700 hover:bg-light-300 rounded-full' onClick={() => handleAddToFavorites(item.id)}><Image src="/heart.svg" alt="Add to favorites" width={16} height={16} /></button>
+                <button className='p-3 border border-light-300 hover:text-dark-700 hover:bg-light-300 rounded-full' onClick={() => handleAddToFavorites(item.id)} ><Image src="/heart.svg" alt="Add to favorites" width={16} height={16} /></button>
             </div>
         </div>
     )
@@ -105,17 +113,17 @@ const CartClient = () => {
                 <div className='flex flex-col w-full justify-center'>
                     <h2 className='text-heading-3 mb-4'>Bag</h2>
                     <h3 className='lg:hidden border-b border-light-300 pb-8'><span className='text-dark-700'>{totalItems} Item{totalItems === 1 ? "" : "s"} | </span> ${totalPrice.toFixed(2)}</h3>
-                        {totalItems > 0 ? (
-                            <>
-                                {cartItems.map((item, index) => <CartItem key={index} item={item} setCartItems={setCartItems} />)}
-                                <div>
-                                    <p className="text-heading-4">Shipping</p>
-                                    <p className="">Arrives by {formatter.format(new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000))}</p>
-                                </div>
-                            </>
-                        ) : (
-                            <p>Your bag is currently empty.</p>
-                        )}
+                    {totalItems > 0 ? (
+                        <>
+                            {cartItems.map((item, index) => <CartItem key={index} item={item} setCartItems={setCartItems} />)}
+                            <div>
+                                <p className="text-heading-4">Shipping</p>
+                                <p className="">Arrives by {formatter.format(new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000))}</p>
+                            </div>
+                        </>
+                    ) : (
+                        <p>Your bag is currently empty.</p>
+                    )}
                 </div>
 
                 {/* Summary */}
