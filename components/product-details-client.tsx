@@ -10,6 +10,8 @@ import Review, { StarRating } from './review'
 import Carousel from './you-might-also-like-carousel'
 import CartModal from './cart-modal'
 import {  addProductToCart } from '@/lib/actions/cart.actions'
+import { getCurrentUser } from "@/lib/actions/auth.actions";
+import { ensureGuestSession } from '@/lib/guest'
 
 const detailsColumns = [
     { title: 'Size & Fit', content: 'True to size. We recommend ordering your usual size.', },
@@ -22,7 +24,16 @@ type ProductDetailsClientProps = {
     variants: ProductDetail['variants'];
     reviews: Review[];
     recommendedProducts: CardProps[];
-    // addProductToCart: (selectedVariant: Variant | null, setIsCartOpen: React.Dispatch<React.SetStateAction<boolean>>) => Promise<void>;
+}
+
+const getUserOrGuest = async (): Promise<{ userId: string | null; guestId: string | null; sessionToken: string | null }> => {
+    const userResp = await getCurrentUser();
+    if (userResp.ok) {
+        return { userId: userResp.user?.id || null, guestId: null, sessionToken: null };
+    } else {
+        const guestSession = await ensureGuestSession();
+        return { userId: null, guestId: null, sessionToken: guestSession.sessionToken || null };
+    }
 }
 
 const ProductDetailsClient = ({ product, images, variants, reviews, recommendedProducts }: ProductDetailsClientProps) => {
@@ -46,13 +57,16 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
     // Cart popup state
     const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
 
-    const handleAddtoCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleAddtoCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         if (!selectedVariant) return;
 
         setIsCartOpen(true);
-        addProductToCart(selectedVariant);
+
+        const { userId, sessionToken } = await getUserOrGuest();
+        console.log("User or Guest info on add to cart:", { userId, sessionToken });
+        addProductToCart(selectedVariant, userId, sessionToken);
     };
 
     return (

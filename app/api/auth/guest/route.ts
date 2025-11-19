@@ -18,7 +18,7 @@ export async function POST() {
 
 	const res = NextResponse.json({ ok: true, sessionToken: guestSessionToken, id: guest.id });
 
-	// set httpOnly cookie on the response (adjust options as needed)
+	// set httpOnly cookie on the response
 	res.cookies.set({
 		name: "guest_session",
 		value: guestSessionToken,

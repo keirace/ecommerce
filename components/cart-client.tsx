@@ -1,9 +1,9 @@
 'use client'
-import { useState, Suspense, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Carousel from './you-might-also-like-carousel';
+// import Carousel from './you-might-also-like-carousel';
 import Image from 'next/image';
-import { addCartItem, incrementCartItemQuantity, removeCartItem } from '@/lib/actions/cart.actions';
+import { incrementCartItemQuantity, removeCartItem } from '@/lib/actions/cart.actions';
 
 const CartItem = ({ item, setCartItems }: { item: CartItemProps, setCartItems: React.Dispatch<React.SetStateAction<CartItemProps[]>> }) => {
     const handleRemoveItem = (itemId: string | number) => {
@@ -70,7 +70,7 @@ const CartClient = () => {
     useEffect(() => {
         const fetchCartItems = async () => {
             try {
-                const response = await fetch('/api/cart', { credentials: 'include' });
+                const response = await fetch("/api/cart", { credentials: 'include' });
                 const data = await response.json();
                 setCartItems(data.items);
             } catch (error) {
