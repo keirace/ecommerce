@@ -48,7 +48,6 @@ export const addProductToCart = async (selectedVariant: Variant | null, userId: 
 export const getCart = async (userId: string | null, guestId: string | null) => {
 	let cart;
 	if (userId) {
-		console.info(`[getCart] fetching cart for userId: ${userId}`);
 		cart = await db
 			.select()
 			.from(schema.cart)
@@ -56,7 +55,6 @@ export const getCart = async (userId: string | null, guestId: string | null) => 
 			.limit(1)
 			.then((res) => res[0]);
 	} else if (guestId) {
-		console.info(`[getCart] fetching cart for guestId: ${guestId}`);
 		cart = await db
 			.select()
 			.from(schema.cart)
