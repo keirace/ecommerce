@@ -34,7 +34,6 @@ export async function GET() {
 	}
 
 	const items = cart ? await getCartItems(cart.id) : [];
-	console.log("Fetched cart items:", items);
 
 	return NextResponse.json({ items });
 }

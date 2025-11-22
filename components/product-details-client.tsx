@@ -68,7 +68,6 @@ const ProductDetailsClient = ({ product, images, variants, reviews, recommendedP
         setIsCartOpen(true);
 
         const { userId, sessionToken } = await getUserOrGuest();
-        console.log("User or Guest info on add to cart:", { userId, sessionToken });
         addProductToCart(selectedVariant, userId, sessionToken);
     };
 
