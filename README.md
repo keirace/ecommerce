@@ -7,8 +7,9 @@
 ![PostGreSQL](https://img.shields.io/badge/PostGreSQL-8.16.3-red)
 ![Drizzle ORM](https://img.shields.io/badge/Drizzle-ORM-green)
 ![Better Auth](https://img.shields.io/badge/Better-Auth-purple)
+![Stripe](https://img.shields.io/badge/Stripe-Payment-blueviolet)
 
-A full-stack Nike-inspired ecommerce platform built with modern web technologies, featuring product browsing, user authentication, shopping cart, and more.
+A full-stack Nike-inspired ecommerce platform built with modern web technologies, featuring product browsing, user authentication, shopping cart, and secure payment processing.
 
 ## Core Features
 
@@ -34,6 +35,9 @@ A full-stack Nike-inspired ecommerce platform built with modern web technologies
 - **Guest Cart Persistence** - Cart saved via httpOnly cookies for guests
 - **Wishlist** - Save favorite products for later
 - **Price Management** - Regular and sale pricing with variant-specific pricing
+- **Secure Checkout** - Stripe-powered payment processing with Checkout Sessions
+- **Payment Processing** - Support for cards, Apple Pay, Google Pay, and more payment methods
+- **Order Confirmation** - Real-time payment status and order completion feedback
 
 ### Responsive Design
 - **Mobile-First** - Optimized for mobile, tablet, and desktop
@@ -53,12 +57,14 @@ A full-stack Nike-inspired ecommerce platform built with modern web technologies
 - **React 19** for component architecture
 - **TypeScript** for type safety
 - **Tailwind CSS** for styling with custom design system
+- **Stripe Elements** - Embedded payment UI with customizable appearance
 - **Client/Server Components** - Optimal data fetching and rendering
 
 ### Backend
 - **PostgreSQL** database with Neon hosting
 - **Drizzle ORM** for type-safe database operations
 - **Better Auth** for authentication and session management
+- **Stripe API** for secure payment processing and checkout sessions
 - **Zod** for runtime validation and type inference
 - **Server Actions** for form handling and mutations
 
@@ -82,6 +88,9 @@ A full-stack Nike-inspired ecommerce platform built with modern web technologies
 │   ├── carts (user/guest shopping carts)
 │   ├── cart_items (products in cart)
 │   ├── wishlists (saved products)
+│   ├── orders (purchase records)
+│   ├── order_items (products in orders)
+│   ├── payments (payment transactions)
 │   └── addresses (shipping/billing)
 │
 └── Content & Collections
@@ -95,6 +104,7 @@ A full-stack Nike-inspired ecommerce platform built with modern web technologies
 ### Prerequisites
 - Node.js 18+ 
 - PostgreSQL database (Neon recommended)
+- Stripe account (for payment processing)
 - npm or yarn
 
 ### Installation
@@ -116,6 +126,9 @@ A full-stack Nike-inspired ecommerce platform built with modern web technologies
    DATABASE_URL=postgresql://user:password@host:port/database
    BETTER_AUTH_SECRET=your-secret-key
    BETTER_AUTH_URL=http://localhost:3000
+   NEXT_PUBLIC_BASE_URL=http://localhost:3000
+   STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
+   NEXT_PUBLIC_STRIPE_PUBLIC_KEY=pk_test_your_stripe_public_key
    NODE_ENV=development
    ```
 
@@ -149,7 +162,12 @@ Visit `http://localhost:3000` to see the application.
 ├── app/
 │   ├── (auth)/              # Authentication pages
 │   ├── (root)/              # Main application pages
+│   │   ├── checkout/        # Checkout and payment pages
+│   │   └── ...
 │   ├── api/                 # API routes
+│   │   ├── auth/            # Authentication endpoints
+│   │   ├── cart/            # Cart operations
+│   │   └── checkout/        # Stripe checkout sessions
 │   └── globals.css          # Global styles
 │
 ├── components/              # Reusable UI components
@@ -157,12 +175,15 @@ Visit `http://localhost:3000` to see the application.
 │   ├── card.tsx
 │   ├── filters.tsx
 │   ├── navbar.tsx
+│   ├── CheckoutForm.tsx     # Stripe payment form
 │   └── ...
 │
 ├── database/                # Database schema and models
 │   ├── filters/             # Filter-related models
 │   ├── account.model.ts
 │   ├── user.model.ts
+│   ├── order.model.ts
+│   ├── payment.model.ts
 │   └── seed.ts
 │
 ├── lib/                     # Utilities and configurations
@@ -193,12 +214,35 @@ Visit `http://localhost:3000` to see the application.
 // Guest session creation
 POST /api/auth/guest
 → Creates guest record + httpOnly cookie
+
+// Fetch cart items
 GET /api/cart
-→ Fetches all cart items
+→ Fetches all cart items for user/guest
 
 // Cart merge on login
 → Merge guest cart into user cart
 → Clear guest session
+```
+
+### Checkout & Payment Flow
+```typescript
+// Create Stripe Checkout Session
+POST /api/checkout
+→ Fetch cart items
+→ Create Stripe checkout session with line items
+→ Return client_secret for payment UI
+
+// Checkout page
+→ Render Stripe CheckoutProvider with client_secret
+→ Collect shipping address and payment details
+→ Validate all fields (email, address, payment)
+→ Submit payment via Stripe
+
+// Payment completion
+GET /checkout/complete?session_id=...
+→ Verify payment status with Stripe
+→ Display order confirmation
+→ Clear cart and redirect
 ```
 
 ### Mobile-Responsive Design
@@ -206,6 +250,7 @@ GET /api/cart
 - **Filter Panel**: Slide-over on mobile, sidebar on desktop
 - **Navigation**: Hamburger menu on mobile, full nav on desktop
 - **Images**: Responsive sizing with Next.js Image optimization
+- **Checkout Flow**: Optimized form layout for mobile and desktop
 
 ## Development Commands
 
@@ -224,7 +269,3 @@ npx drizzle-kit studio      # Open Drizzle Studio
 npm run lint               # Run ESLint
 npm run type-check         # TypeScript type checking
 ```
-
-## License
-
-MIT License - feel free to use this project as a learning resource or starting point for your own ecommerce application.
